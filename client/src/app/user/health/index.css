@@ -1,0 +1,38 @@
+.ant-carousel .slick-slide {
+  text-align: center;
+  padding-top: 30px;
+  height: 160px;
+  width: 100%;
+  min-width: 320px;
+  background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
+  overflow: hidden;
+  color: #fff;
+}
+
+.ant-carousel .slick-slide h1 {
+  color: #fff;
+}
+
+.m-line {
+  display: flex;
+  justify-content: center;
+}
+
+.m-line p{
+  margin-bottom: 0;
+}
+
+.m-link {
+  margin-left: 10px;
+  text-decoration: underline;
+}
+
+/* .m-btn {
+  background-color: #fff;
+  color: #6f86d6;
+  border: 1px solid #6f86d6;
+  border-radius: 3px;
+  width: 70px;
+  padding: 0 5px;
+  margin-left: 5px;;
+} */
