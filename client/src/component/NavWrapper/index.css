@@ -26,7 +26,13 @@
     align-items: center;
     justify-content: space-between;
     font-size: 1.2rem;
-    width: 80px;
+    min-width: 80px;
+}
+
+@media screen and (max-width: 379px) {
+    .m-icon {
+        min-width: 50px;
+    }
 }
 
 .m-btn {
