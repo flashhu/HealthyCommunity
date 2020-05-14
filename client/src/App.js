@@ -1,15 +1,13 @@
 import React from 'react'
-import { Switch, Route, Router } from 'react-router-dom'
+import { Switch, Route, HashRouter as Router} from 'react-router-dom'
 import loadable from '@loadable/component'
 import NavWrapper from './component/NavWrapper'
 import FixedBar from './component/FixedBar'
 import ContentWrapper from './component/ContentWrapper'
-import history from './history'
-
 
 function App() {
   return (
-    <Router history={history}>
+    <Router>
       <Switch>
         <Route path='/' exact component={loadable(() => import('./app/common/login'))} />>
         <Route path='/login' component={loadable(() => import('./app/common/login'))} />>

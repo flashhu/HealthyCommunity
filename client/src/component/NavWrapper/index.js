@@ -19,7 +19,8 @@ class NavWrapper extends Component {
     }
 
     render() {
-        const path = window.location.pathname;
+        // 通过this.props使用history
+        const path = this.props.location.pathname;
 
         return (
             <div className='g-navwrapper'>

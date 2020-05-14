@@ -26,14 +26,12 @@ class FixedBar extends Component {
     changeScrollTopShow = () => {
         if (document.documentElement.scrollTop > 200) {
             if (this.state.show === false){
-                console.log(1);
                 this.setState({
                     show: true
                 })
             }
         }else {
             if (this.state.show === true) {
-                console.log(0);
                 this.setState({
                     show: false
                 })
