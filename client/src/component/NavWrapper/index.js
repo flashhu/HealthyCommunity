@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavLink, withRouter } from 'react-router-dom'
+import { NavLink, withRouter, Redirect } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Menu, Button } from 'antd'
@@ -20,32 +20,33 @@ class NavWrapper extends Component {
 
     render() {
         const path = window.location.pathname;
-
+        // console.log("this is nav type:"+this.currUser.type);
         return (
             <div className='g-navwrapper'>
                 <div className="m-nav">
                     <div className="m-logo">
                         <img src={logo} alt='logo' />
                     </div>
-                    <Menu 
-                        theme="light" 
-                        mode="horizontal" 
+                    <Menu
+                        theme="light"
+                        mode="horizontal"
                         defaultSelectedKeys={USER_MENU_LIST[0].name}
                         selectedKeys={[path]}
                     >
-                        {this.currUser.type && ADMIN_MENU_LIST.map((item) =>
+                        {!this.currUser && <Redirect to='/login' />}
+                        {this.currUser && this.currUser.type && ADMIN_MENU_LIST.map((item) =>
                             <Menu.Item key={item.path}>
                                 <NavLink to={item.path}>
                                     <span>{item.name}</span>
                                 </NavLink>
                             </Menu.Item>
                         )}
-                        {!this.currUser.type && USER_MENU_LIST.map((item)=>
+                        {this.currUser && !this.currUser.type && USER_MENU_LIST.map((item) =>
                             <Menu.Item key={item.path}>
                                 <NavLink to={item.path}>
                                     <span>{item.name}</span>
                                 </NavLink>
-                            </Menu.Item> 
+                            </Menu.Item>
                         )}
                     </Menu>
                     <div className="right">
@@ -59,7 +60,7 @@ class NavWrapper extends Component {
                             <div className="m-btn">
                                 <Button type="primary" shape="round" size="small">
                                     <NavLink to='/login'>
-                                        登录
+                                        ç™»å½•
                                     </NavLink>
                                 </Button>
                             </div>

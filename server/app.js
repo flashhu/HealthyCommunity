@@ -10,8 +10,7 @@ app.use(bodyParser.json())
 
 // user
 app.use('/health', require('./route/user/health'));
-
-
+app.use('/', require('./route/user/login'));
 //admin
 
 
