@@ -33,7 +33,7 @@ class User {
             runInAction(() => {
                 token.saveUser(r.data.data)
                 this.currUser = r.data.data
-                console.log("this is store type: "+this.currUser.type);
+                // console.log("this is store: "+r.data.data);
             })
             return r.data
         } else {

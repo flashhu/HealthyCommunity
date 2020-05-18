@@ -4,6 +4,7 @@ import loadable from '@loadable/component'
 import NavWrapper from './component/NavWrapper'
 import FixedBar from './component/FixedBar'
 import ContentWrapper from './component/ContentWrapper'
+// import history from './history'
 
 function App() {
   return (

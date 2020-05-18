@@ -5,9 +5,9 @@ import { computed } from 'mobx'
 import { Form, Input, Checkbox, Button, Radio, message } from 'antd'
 import { PhoneOutlined, LockOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'
-import logo from '../../../asset/image/favicon.png'
+import logo from '../../asset/image/favicon.png'
 import './index.less'
-import token from '../../../util/token.js'
+import token from '../../util/token.js'
 @inject('userStore')
 @observer
 class Login extends Component {
@@ -71,8 +71,8 @@ class Login extends Component {
         return (
 
             <div className='g-login'>
-                {this.currUser&&this.currUser.type && <Redirect to='admin/health' />}
-                {this.currUser&&!this.currUser.type && <Redirect to='/health' />}
+                {this.currUser && this.currUser.type && <Redirect to='admin/' />}
+                {this.currUser && !this.currUser.type && <Redirect to='/' />}
                 <div className='m-login'>
                     <div className='m-logo'>
                         <img src={logo} alt='' />
