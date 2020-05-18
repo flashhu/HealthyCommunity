@@ -4,6 +4,11 @@ export const USER_MENU_LIST = [
     { name: '公告', path: '/notice' },
 ]
 
+export const ADMIN_MENU_LIST = [
+    { name: '健康', path: '/admin/health' },
+    { name: '公告', path: '/admin/notice' },
+]
+
 // 健康状态对应的提示
 export const HEALTH_MESSAGE = [
     { code: '0', message: '低烧，注意休息，尽早就医'},
