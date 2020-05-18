@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { ArrowUpOutlined, ShoppingCartOutlined } from '@ant-design/icons'
+import { ArrowUpOutlined, EditOutlined } from '@ant-design/icons'
 import { Redirect } from 'react-router-dom' 
 import './index.css'
 
@@ -59,17 +59,17 @@ class FixedBar extends Component {
     render() {
         return (
             <div className="g-bar">
-                {this.state.change && <Redirect to='/service' />}
-                {this.state.show && 
-                    <div>
-                        <div className="m-wrapper" onClick={this.handleCheckCart}>
-                            <ShoppingCartOutlined />
-                        </div>
+                {this.state.change && <Redirect to='/edit/new' />}
+                <div>
+                    <div className="m-wrapper" onClick={this.handleCheckCart}>
+                        <EditOutlined />
+                    </div>
+                    { this.state.show && 
                         <div className="m-wrapper" onClick={this.handleScrollTop}>
                             <ArrowUpOutlined />
                         </div>
-                    </div>
-                }
+                    }
+                </div>
             </div>
         )
     }

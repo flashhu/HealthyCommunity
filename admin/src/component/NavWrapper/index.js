@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { NavLink, withRouter, Redirect } from 'react-router-dom'
+import { NavLink, withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Menu, Button } from 'antd'
-import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 
-import { USER_MENU_LIST, ADMIN_MENU_LIST } from '../../constant/data'
+import { ADMIN_MENU_LIST } from '../../constant/data'
 import logo from '../../asset/image/favicon.png'
 import './index.css'
 
@@ -19,29 +19,24 @@ class NavWrapper extends Component {
     }
 
     render() {
+        // 通过this.props使用history
         const path = this.props.location.pathname;
 
         return (
             <div className='g-navwrapper'>
                 <div className="m-nav">
-                    <div className="m-logo">
-                        <img src={logo} alt='logo' />
-                    </div>
-                    <Menu
-                        theme="light"
-                        mode="horizontal"
-                        defaultSelectedKeys={USER_MENU_LIST[0].name}
+                    <NavLink to='/login'>
+                        <div className="m-logo">
+                            <img src={logo} alt='logo' />
+                        </div>
+                    </NavLink>
+                    <Menu 
+                        theme="light" 
+                        mode="horizontal" 
+                        defaultSelectedKeys={ADMIN_MENU_LIST[0].name}
                         selectedKeys={[path]}
                     >
-                        {!this.currUser && <Redirect to='/login' />}
-                        {this.currUser && this.currUser.type && ADMIN_MENU_LIST.map((item) =>
-                            <Menu.Item key={item.path}>
-                                <NavLink to={item.path}>
-                                    <span>{item.name}</span>
-                                </NavLink>
-                            </Menu.Item>
-                        )}
-                        {this.currUser && !this.currUser.type && USER_MENU_LIST.map((item) =>
+                        {ADMIN_MENU_LIST.map((item) =>
                             <Menu.Item key={item.path}>
                                 <NavLink to={item.path}>
                                     <span>{item.name}</span>
@@ -52,9 +47,6 @@ class NavWrapper extends Component {
                     <div className="right">
                         {this.currUser &&
                             <div className="m-icon">
-                                <NavLink to='/service'>
-                                    <ShoppingCartOutlined />
-                                </NavLink>
                                 <NavLink to='/conf'>
                                     <UserOutlined />
                                 </NavLink>

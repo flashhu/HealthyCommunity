@@ -1,5 +1,5 @@
 export const USER_MENU_LIST = [
-    { name: '健康', path: '/health' },
+    { name: '健康', path: '/' },
     { name: '服务', path: '/service' },
     { name: '公告', path: '/notice' },
 ]
