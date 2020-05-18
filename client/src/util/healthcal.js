@@ -117,6 +117,7 @@ export let habitScoreCal = (data) => {
     if (data.target < 0.5) { //久坐不动
         score -= 5;
     }
+    return score;
 }
 
 //计算综合健康指数

@@ -1,6 +1,6 @@
 const express = require('express');
-var db = require('../../module/db');
-var health = require('../../module/health');
+var db = require('../module/db');
+var health = require('../module/health');
 const router = express.Router();
 
 router.post('/newCard', (req, res) => {

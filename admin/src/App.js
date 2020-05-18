@@ -9,16 +9,16 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path='/login' component={loadable(() => import('./app/login'))} />>
-        <Route path='/register' component={loadable(() => import('./app/register'))} />
+        <Route path='/login' exact component={loadable(() => import('./app/login'))} />>
+        <Route path='/register' exact component={loadable(() => import('./app/register'))} />
         <Route path='/' render={() => (
           <div className="app-root">
             <NavWrapper />
             <ContentWrapper>
               <Switch>
                 <Route path='/' exact component={loadable(() => import('./app/health'))} />
-                <Route path='/service' exact component={loadable(() => import('./app/service'))} />
                 <Route path='/notice' exact component={loadable(() => import('./app/notice'))} />
+                <Route path='/edit/:id' exact component={loadable(() => import('./app/edit'))} />
                 <Route path='/detail/:id' exact component={loadable(() => import('./app/detail'))} />
                 <Route path='/conf' exact component={loadable(() => import('./app/conf'))} />
               </Switch>

@@ -3,9 +3,9 @@ import { NavLink, withRouter } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Menu, Button } from 'antd'
-import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { UserOutlined } from '@ant-design/icons';
 
-import { USER_MENU_LIST } from '../../constant/data'
+import { ADMIN_MENU_LIST } from '../../constant/data'
 import logo from '../../asset/image/favicon.png'
 import './index.css'
 
@@ -25,7 +25,7 @@ class NavWrapper extends Component {
         return (
             <div className='g-navwrapper'>
                 <div className="m-nav">
-                    <NavLink to='/'>
+                    <NavLink to='/login'>
                         <div className="m-logo">
                             <img src={logo} alt='logo' />
                         </div>
@@ -33,23 +33,20 @@ class NavWrapper extends Component {
                     <Menu 
                         theme="light" 
                         mode="horizontal" 
-                        defaultSelectedKeys={USER_MENU_LIST[0].name}
+                        defaultSelectedKeys={ADMIN_MENU_LIST[0].name}
                         selectedKeys={[path]}
                     >
-                        {USER_MENU_LIST.map((item)=>
+                        {ADMIN_MENU_LIST.map((item) =>
                             <Menu.Item key={item.path}>
                                 <NavLink to={item.path}>
                                     <span>{item.name}</span>
                                 </NavLink>
-                            </Menu.Item> 
+                            </Menu.Item>
                         )}
                     </Menu>
                     <div className="right">
                         {this.currUser &&
                             <div className="m-icon">
-                                <NavLink to='/service'>
-                                    <ShoppingCartOutlined />
-                                </NavLink>
                                 <NavLink to='/conf'>
                                     <UserOutlined />
                                 </NavLink>

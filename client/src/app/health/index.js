@@ -3,8 +3,8 @@ import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Carousel } from 'antd'
 import { DoubleRightOutlined } from '@ant-design/icons'
-import HabitDialog from '../../../component/HabitDialog'
-import CardDialog from '../../../component/CardDialog'
+import HabitDialog from '../../component/HabitDialog'
+import CardDialog from '../../component/CardDialog'
 import './index.css'
 
 @inject('cardStore', 'userStore')

@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // user
-app.use('/health', require('./route/user/health'));
+app.use('/health', require('./route/health'));
 
 
 //admin
