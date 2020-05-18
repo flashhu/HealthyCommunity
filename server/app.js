@@ -8,10 +8,8 @@ app.use(cors());  /* 解决跨域问题 */
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-// user
-app.use('/health', require('./route/user/health'));
-app.use('/', require('./route/user/login'));
-//admin
+app.use('/health', require('./route/health'));
+app.use('/user', require('./route/user'));
 
 
 app.listen(port, () => console.log(`> Running on localhost:${port}`))

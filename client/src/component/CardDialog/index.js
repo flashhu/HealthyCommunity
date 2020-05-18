@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Modal, Form, Input, message } from 'antd'
+import { Modal, Form, InputNumber, message } from 'antd'
 import { getCurrDate } from '../../util/date'
 import { cardStatusCal, cardScoreCal } from '../../util/healthcal'
 
@@ -33,20 +33,16 @@ class CardDialog extends Component {
     }
 
     handleOk = () => {
-        this.setState({
-            confirmLoading: true,
-        });
         this.formRef.current.validateFields()
             .then(values => {
-                values['blodpres_relax'] = parseInt(values.blodpres_relax);
-                values['blodpres_shrink'] = parseInt(values.blodpres_shrink);
-                values['heartrat'] = parseInt(values.heartrat);
-                values['temp'] = parseFloat(values.temp);
+                this.setState({
+                    confirmLoading: true,
+                });
                 values['status'] = cardStatusCal(values);
                 values['score'] = cardScoreCal(values);
-                values['uid'] = parseInt(this.currUser.id);
+                values['uphone'] = this.currUser.phone;
                 values['date'] = getCurrDate();
-                // console.log(values);
+                console.log(this.currUser);
 
                 this.props.cardStore.addCard(values)
                     .then(r => {
@@ -56,14 +52,14 @@ class CardDialog extends Component {
                             message.error(r.msg);
                         }
                     })
-
-            }).catch(errorInfo => {
-                message.error(errorInfo);
+                setTimeout(this.setState({
+                    visible: false,
+                    confirmLoading: false,
+                }), 500);
+            }).catch(err => {
+                message.error('表单数据有误，请根据提示填写！');
             })
-        this.setState({
-            visible: false,
-            confirmLoading: false,
-        });
+        
     };
 
     handleCancel = () => {
@@ -75,12 +71,6 @@ class CardDialog extends Component {
     render() {
         const { visible, confirmLoading } = this.state;
         const layout = { labelCol: { span: 9 }, wrapperCol: { span: 8 } };
-        const validateMessages = {
-            required: '请输入${label}!',
-            number: {
-                range: '请输入真实的${label}！',
-            },
-        };
 
         return (
             <div>
@@ -92,31 +82,43 @@ class CardDialog extends Component {
                     onCancel={this.handleCancel}
                     afterClose={this.props.afterClose}
                 >
-                    <Form {...layout} ref={this.formRef} validateMessages={validateMessages}>
-                        <Form.Item
-                            label="体温"
-                            name="temp"
-                            rules={[{ required: true }]}
-                        >
-                            <Input addonAfter="°C" type="number" min={35} max={45} step={0.1} />
+                    <Form {...layout} ref={this.formRef}>
+                        <Form.Item label="体温" required>
+                            <Form.Item 
+                                name="temp"
+                                rules={[{ required: true,  message: '请输入体温！' }]}
+                                noStyle
+                            >
+                                <InputNumber min={35} max={45} step={0.1} />
+                            </Form.Item>
+                            <span className="ant-form-text">°C</span>
                         </Form.Item>
-                        <Form.Item
-                            label="心率"
-                            name="heartrat"
-                        >
-                            <Input addonAfter="bmp" type="number" min={20} max={300} />
+                        <Form.Item label="心率">
+                            <Form.Item
+                                name="heartrat"
+                                noStyle
+                            >
+                                <InputNumber min={20} max={300} />
+                            </Form.Item>
+                            <span className="ant-form-text">bmp</span>
                         </Form.Item>
-                        <Form.Item label="血压">
+                        <Form.Item label="收缩压">
                             <Form.Item
                                 name="blodpres_shrink"
+                                noStyle
                             >
-                                <Input addonAfter="mmHg" type="number" min={10} max={141} placeholder="收缩压" />
+                                <InputNumber min={10} max={141} />
                             </Form.Item>
+                            <span className="ant-form-text">mmHg</span>
+                        </Form.Item>
+                        <Form.Item label="舒张压">
                             <Form.Item
                                 name="blodpres_relax"
+                                noStyle
                             >
-                                <Input addonAfter="mmHg" type="number" min={10} max={91} placeholder="舒张压" />
+                                <InputNumber min={10} max={91} />
                             </Form.Item>
+                            <span className="ant-form-text">mmHg</span>
                         </Form.Item>
                     </Form>
                 </Modal>

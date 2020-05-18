@@ -6,7 +6,7 @@ const db = require('./db');
  * @param {function} cb 回调
  */
 var vertifyCard = async (params, cb) => {
-    let where = `where uid='${params.uid}' and date='${params.date}'`
+    let where = `where uphone='${params.uphone}' and date='${params.date}'`
     db.select('card', where, '', '', (err, ret) => {
         if(err) {
             cb(err, {code: 0, msg:'数据查询失败！', status: false});

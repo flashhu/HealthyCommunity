@@ -10,10 +10,10 @@ router.post('/newCard', (req, res) => {
                 res.json(r);
             })
         }else{
-            let uid = req.body.uid;
+            let uphone = req.body.uphone;
             let date = req.body.date;
             let where = {};
-            where.uid = uid;
+            where.uphone = uphone;
             where.date = date;
             db.modify('card', req.body, where, (err, r)=>{
                 res.json(r);

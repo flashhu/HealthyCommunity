@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Modal, Form, Input, Radio, message } from 'antd'
+import { Modal, Form, InputNumber, Radio, message } from 'antd'
 import { getIngest } from '../../util/healthcal'
 
 @inject('userStore', 'cardStore')
@@ -32,14 +32,11 @@ class HabitDialog extends Component {
     }
 
     handleOk = () => {
-        this.setState({
-            confirmLoading: true,
-        });
         this.formRef.current.validateFields()
             .then(values => {
-                values['age'] = parseInt(values.age);
-                values['height'] = parseInt(values.height);
-                values['weight'] = parseFloat(values.weight);
+                this.setState({
+                    confirmLoading: true,
+                });
                 values['dailyIngest'] = parseInt(getIngest(values));
                 values['phone'] = this.currUser.phone;
                 // console.log(values);
@@ -52,16 +49,13 @@ class HabitDialog extends Component {
                             message.error(r.msg);
                         }
                     })
-                    
+                setTimeout(this.setState({
+                    visible: false,
+                    confirmLoading: false,
+                }), 500);   
             }).catch(errorInfo => {
-                message.error(errorInfo);
+                message.error('表单数据有误，请根据提示填写！');
             })
-        setTimeout(() => {
-            this.setState({
-                visible: false,
-                confirmLoading: false,
-            });
-        }, 1000);
     };
 
     handleCancel = () => {
@@ -73,12 +67,6 @@ class HabitDialog extends Component {
     render() {
         const { visible, confirmLoading } = this.state;
         const layout = {labelCol: {span: 6},wrapperCol: {span: 16}};
-        const validateMessages = {
-            required: '请输入${label}!',
-            number: {
-                range: '请输入真实的${label}！',
-            },
-        };
 
         return (
             <div>
@@ -90,7 +78,7 @@ class HabitDialog extends Component {
                     onCancel={this.handleCancel}
                     afterClose={this.props.afterClose}
                 >
-                    <Form {...layout} ref={this.formRef} validateMessages={validateMessages}>
+                    <Form {...layout} ref={this.formRef}>
                         <Form.Item 
                             label="性别" 
                             name="sex"
@@ -101,26 +89,35 @@ class HabitDialog extends Component {
                                 <Radio.Button value={0}>女</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
-                        <Form.Item
-                            label="年龄"
-                            name="age"
-                            rules={[{required: true}]}
-                        >
-                            <Input addonAfter="岁" />
+                        <Form.Item label="年龄" required>
+                            <Form.Item
+                                name="age"
+                                rules={[{ required: true, message: '请输入体温！' }]}
+                                noStyle
+                            >
+                                <InputNumber min={0} max={160} />
+                            </Form.Item>
+                            <span className="ant-form-text">岁</span>
                         </Form.Item>
-                        <Form.Item
-                            label="身高"
-                            name="height"
-                            rules={[{required: true}]}
-                        >
-                            <Input addonAfter="厘米" />
+                        <Form.Item label="身高" required>
+                            <Form.Item
+                                name="height"
+                                rules={[{ required: true, message: '请输入身高！' }]}
+                                noStyle
+                            >
+                                <InputNumber min={50} max={250} />
+                            </Form.Item>
+                            <span className="ant-form-text">厘米</span>
                         </Form.Item>
-                        <Form.Item
-                            label="体重"
-                            name="weight"
-                            rules={[{required: true}]}
-                        >
-                            <Input addonAfter="公斤" />
+                        <Form.Item label="体重" required>
+                            <Form.Item
+                                name="weight"
+                                rules={[{ required: true, message: '请输入体重！' }]}
+                                noStyle
+                            >
+                                <InputNumber min={0} max={160} />
+                            </Form.Item>
+                            <span className="ant-form-text">公斤</span>
                         </Form.Item>
                         <Form.Item
                             label="活动类型"
