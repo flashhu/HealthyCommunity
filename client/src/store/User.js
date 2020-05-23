@@ -6,6 +6,7 @@ import token from '../util/token.js'
 class User {
     @observable
     currUser = undefined
+    captcha = undefined
     //currUser = {id:1, name:'张三', phone:'13376546789', address:'1幢201室', passwd:'123456', type: 0}
 
     @action
@@ -33,6 +34,11 @@ class User {
             runInAction(() => {
                 token.saveUser(r.data.data)
                 this.currUser = r.data.data
+                console.log('get from back age: '+this.currUser.age);
+                if (this.currUser && !this.currUser.remember) {
+                    token.removeUser();
+                    console.log("not remember");
+                }
                 // console.log("this is store: "+r.data.data);
             })
             return r.data
@@ -41,7 +47,20 @@ class User {
         }
     }
 
+    @action
+    async valPhone(params) {
+        const r = await axios.post(urls.API_USER_VALIDATE_PHONE, params)
+        if (r && r.status === 200) {
+            // console.log('this is captcha: ' + r.data.captcha);
+            this.captcha = r.data.captcha
+            return r.data
+        }
+    }
 
+    @action
+    logout() {
+        token.removeUser()
+    }
 }
 
 export default new User()

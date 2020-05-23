@@ -43,6 +43,7 @@ class Health extends Component {
     }
 
     render() {
+        // console.log('get from back age: '+this.currUser.age);
         return (
             <div className="g-health">
                 <Carousel autoplay>
