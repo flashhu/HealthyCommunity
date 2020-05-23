@@ -49,7 +49,7 @@ var verifyPwd = async (params, cb) => {
         } else {
             if (ret.rows.length > 0) {
                 user = ret.rows[0]
-                data = { name: user.name, sex: user.sex, age: user.age, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type, weight: user.weight, height: user.height, level: user.level, target: user.target, dailyIngest: user.dailyIngest, score: user.score }
+                data = { name: user.name, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type }
                 cb(err, { code: 1, data: data, msg: '登录成功' })
             } else {
                 cb(err, { code: 0, data: null, msg: '登录失败！请检查用户名或密码！' });
@@ -88,7 +88,11 @@ var verifyPhone = async (params, cb) => {
         }
     })
 }
-
+/**
+ * 向数据库添加新用户
+ * @param {object} params 
+ * @param {function} cb 
+ */
 
 var addUser = async (params, cb) => {
     db.add('user', params, (err, ret) => {
