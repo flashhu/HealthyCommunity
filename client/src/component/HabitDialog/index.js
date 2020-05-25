@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Modal, Form, InputNumber, Radio, message } from 'antd'
-import { getIngest } from '../../util/healthcal'
+import { getIngest, habitScoreCal } from '../../util/healthcal'
 
-@inject('userStore', 'cardStore')
+@inject('userStore', 'healthStore')
 @observer
 class HabitDialog extends Component {
     constructor(props) {
@@ -38,10 +38,11 @@ class HabitDialog extends Component {
                     confirmLoading: true,
                 });
                 values['dailyIngest'] = parseInt(getIngest(values));
-                values['phone'] = this.currUser.phone;
+                values['habitScore'] = habitScoreCal(values);
+                values['uphone'] = this.currUser.phone;
                 // console.log(values);
 
-                this.props.userStore.startHealthPlan(values)
+                this.props.healthStore.startHealthPlan(values)
                     .then(r => {
                         if (r.code === 1) {
                             message.success(r.msg);
@@ -49,10 +50,13 @@ class HabitDialog extends Component {
                             message.error(r.msg);
                         }
                     })
-                setTimeout(this.setState({
-                    visible: false,
-                    confirmLoading: false,
-                }), 500);   
+                setTimeout(() => {
+                    this.setState({
+                        visible: false,
+                        confirmLoading: false
+                    });
+                    this.props.onDialogConfirm();
+                }, 500);   
             }).catch(errorInfo => {
                 message.error('表单数据有误，请根据提示填写！');
             })

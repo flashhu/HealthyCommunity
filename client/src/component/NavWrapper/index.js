@@ -5,7 +5,7 @@ import { computed } from 'mobx'
 import { Menu, Button } from 'antd'
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 
-import { USER_MENU_LIST, ADMIN_MENU_LIST } from '../../constant/data'
+import { USER_MENU_LIST } from '../../constant/data'
 import logo from '../../asset/image/favicon.png'
 import './index.css'
 
@@ -23,6 +23,7 @@ class NavWrapper extends Component {
 
         return (
             <div className='g-navwrapper'>
+                {!this.currUser && <Redirect to='/login' />}
                 <div className="m-nav">
                     <div className="m-logo">
                         <img src={logo} alt='logo' />
@@ -33,15 +34,7 @@ class NavWrapper extends Component {
                         defaultSelectedKeys={USER_MENU_LIST[0].name}
                         selectedKeys={[path]}
                     >
-                        {!this.currUser && <Redirect to='/login' />}
-                        {this.currUser && this.currUser.type && ADMIN_MENU_LIST.map((item) =>
-                            <Menu.Item key={item.path}>
-                                <NavLink to={item.path}>
-                                    <span>{item.name}</span>
-                                </NavLink>
-                            </Menu.Item>
-                        )}
-                        {this.currUser && !this.currUser.type && USER_MENU_LIST.map((item) =>
+                        {USER_MENU_LIST.map((item) =>
                             <Menu.Item key={item.path}>
                                 <NavLink to={item.path}>
                                     <span>{item.name}</span>

@@ -12,11 +12,14 @@ export let cardStatusCal = (data) => {
     if (data.heartrat && data.heartrat > 200) {
         status += '|3';
     }
-    if (data.blodpres_shrink <= 90 && data.blodpres_relax <= 60) {
+    if (data.blodpres_shrink && data.blodpres_relax && data.blodpres_shrink <= 90 && data.blodpres_relax <= 60) {
         status += '|4';
     }
-    if (data.blodpres_shrink >= 140 && data.blodpres_relax >= 90) {
+    if (data.blodpres_shrink && data.blodpres_relax && data.blodpres_shrink >= 140 && data.blodpres_relax >= 90) {
         status += '|5';
+    }
+    if (status.length < 3) {
+        status += '|6';
     }
     return status;
 }
@@ -24,17 +27,14 @@ export let cardStatusCal = (data) => {
 // 根据打卡数据 得出每日健康分数
 export let cardScoreCal = (data) => {
     let list = data.status.split('|');
-    let score = 0;
+    let score = 100;
     list.forEach(function (item) {
         switch (item){
             case '0': case '2':
                 score -= 30;
                 break;
-            case '1':
-                score += 100;
-                break;
             case '3': case '4':case '5':
-                score -= 20;
+                score -= 5;
                 break;
             default:
                 break;
@@ -121,6 +121,14 @@ export let habitScoreCal = (data) => {
 }
 
 //计算综合健康指数
-export let healthScoreCal = (cardScore = 100, habitScore = 100) => {
-    return cardScore * 0.3 + habitScore * 0.7;
+export let healthScoreCal = (params) => {
+    let cardScore = params.cardScore;
+    let habitScore = params.habitScore;
+    if (!cardScore) {
+        cardScore = 100;
+    }
+    if (!habitScore) {
+        habitScore = 100;
+    }
+    return parseInt(cardScore * 0.6 + habitScore * 0.4);
 }
