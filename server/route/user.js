@@ -1,8 +1,7 @@
 const express = require('express');
-const Core = require('@alicloud/pop-core');
 var db = require('../module/db');
 var user = require('../module/user');
-const { genPassword } = require('../module/crypto');
+const { genPassword } = require('../util/crypto');
 const router = express.Router();
 
 router.post('/login', (req, res) => {
@@ -16,7 +15,7 @@ router.post('/register', (req, res) => {
     let params = req.body;
     if(params.match){
         password = genPassword(params.passwd)
-        params = {name: params.name, phone: params.phone, address: params.address, passwd: password, name: params.name, type: params.type}
+        params = {name: params.name, phone: params.phone, address: params.address, passwd: password, type: params.type}
         user.addUser(params, (err, r) => {
             res.status(200).json(r);
         })

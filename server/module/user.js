@@ -1,24 +1,11 @@
 const db = require('./db');
-const { genPassword } = require('./crypto');
-const Core = require('@alicloud/pop-core');
+const { genPassword } = require('../util/crypto');
+const config = require('./config');
 
-var client = new Core({
-    accessKeyId: 'LTAI4GKjjedCZS2Hj9dUhCTZ',
-    accessKeySecret: 'R6H4ZsGZrwPPudU58tGUMYXRjF2xO3',
-    endpoint: 'https://dysmsapi.aliyuncs.com',
-    apiVersion: '2017-05-25'
-});
-var conf = {
-    "RegionId": "cn-hangzhou",
-    "PhoneNumbers": "",
-    "SignName": "智能社区健康管理",
-    "TemplateCode": "SMS_190781753",
-    "TemplateParam": "{\"code\":\"\"}",
-}
+var client = config.client;
+var argum = config.argum;
+var requestOption = config.requestOption;
 
-var requestOption = {
-    method: 'POST'
-};
 /**
  * 确认账户是否存在
  * @param {object} params json 
@@ -73,11 +60,11 @@ var verifyPhone = async (params, cb) => {
             if (ret.rows.length > 0) {
                 cb(err, { code: 0, data: null, msg: '该手机号已注册！', captcha: null });
             } else {
-                conf.PhoneNumbers = params.phone
-                captcha = JSON.parse(conf.TemplateParam)
+                argum.PhoneNumbers = params.phone
+                captcha = JSON.parse(argum.TemplateParam)
                 captcha.code = Math.random().toFixed(6).slice(-6)
-                conf.TemplateParam = JSON.stringify(captcha);
-                client.request('SendSms', conf, requestOption).then((result) => {
+                argum.TemplateParam = JSON.stringify(captcha);
+                client.request('SendSms', argum, requestOption).then((result) => {
                     console.log(JSON.stringify(result));
                 }, (ex) => {
                     console.log(ex);

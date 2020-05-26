@@ -1,5 +1,5 @@
-import React, { Component, useState } from 'react'
-import { Link,Redirect } from 'react-router-dom'
+import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { isValidPhoneNumber } from 'react-phone-number-input'
@@ -7,7 +7,6 @@ import {
     Form,
     Input,
     Cascader,
-    Select,
     Button,
     message,
     Row,
@@ -15,7 +14,6 @@ import {
 } from 'antd'
 import './index.less'
 
-const { Option } = Select;
 var isVal;
 const residences = [
     {
@@ -146,7 +144,7 @@ class Register extends Component {
             values.address = address
             var match = (values.captcha===this.captcha)
             console.log('this is input: ' + values.captcha + ' this is send: ' + this.captcha+'this is match: '+match);
-            this.props.userStore.register({ name: values.name, phone: values.phone, address: values.address, passwd: values.passwd, name: values.name, type: 0 ,match:match})
+            this.props.userStore.register({ name: values.name, phone: values.phone, address: values.address, passwd: values.passwd, type: 0 ,match:match})
                 .then(r => {
                     if (r && r.code === 1) {
                         message.success(r.msg)

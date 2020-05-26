@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const config = require('./config');
-const pool = mysql.createPool(config);
+const pool = mysql.createPool(config.conf);
 
 /**
  * json转为键值对数组
