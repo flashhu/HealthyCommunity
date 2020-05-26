@@ -24,6 +24,7 @@ class NavWrapper extends Component {
 
         return (
             <div className='g-navwrapper'>
+                {!this.currUser && <Redirect to='/login' />}
                 <div className="m-nav">
                     <NavLink to='/login'>
                         <div className="m-logo">

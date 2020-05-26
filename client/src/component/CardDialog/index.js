@@ -5,17 +5,17 @@ import { Modal, Form, InputNumber, message } from 'antd'
 import { getCurrDate } from '../../util/date'
 import { cardStatusCal, cardScoreCal } from '../../util/healthcal'
 
-@inject('cardStore', 'userStore')
+@inject('healthStore', 'userStore')
 @observer
 class CardDialog extends Component {
     constructor(props) {
         super(props);
         this.state = {
             visible: false,
-            confirmLoading: false,
+            confirmLoading: false
         }
     }
-
+    
     //获得form实例
     formRef = React.createRef();
 
@@ -30,6 +30,17 @@ class CardDialog extends Component {
                 visible: this.props.visible
             })
         }
+
+        if (this.props.card) {
+            // setTimeout(() => {
+            //     this.formRef.current.setFieldsValue({
+            //         temp: this.props.card.temp,
+            //         heartrat: this.props.card.heartrat,
+            //         blodpres_shrink: this.props.card.blodpres_shrink,
+            //         blodpres_relax: this.props.card.blodpres_relax
+            //     })
+            // }, 100);
+        }
     }
 
     handleOk = () => {
@@ -42,9 +53,8 @@ class CardDialog extends Component {
                 values['score'] = cardScoreCal(values);
                 values['uphone'] = this.currUser.phone;
                 values['date'] = getCurrDate();
-                console.log(this.currUser);
 
-                this.props.cardStore.addCard(values)
+                this.props.healthStore.addCard(values)
                     .then(r => {
                         if (r.code === 1) {
                             message.success(r.msg);
@@ -52,11 +62,16 @@ class CardDialog extends Component {
                             message.error(r.msg);
                         }
                     })
-                setTimeout(this.setState({
-                    visible: false,
-                    confirmLoading: false,
-                }), 500);
+                setTimeout(() => {
+                    this.setState({
+                        visible: false,
+                        confirmLoading: false
+                    });
+                    this.props.onDialogConfirm();
+                }, 500);
+                
             }).catch(err => {
+                console.log(err);
                 message.error('表单数据有误，请根据提示填写！');
             })
         

@@ -31,3 +31,9 @@ export let convertI2T = (date) => {
     let second = _date.substring(4, 6)
     return `${hour}:${moment}:${second}`
 }
+
+//'2020/05/12' => '2020年5月12日'
+export let convertD2C = (date) => {
+    let list = date.split('/')
+    return `${list[0]}年${list[1]}月${list[2]}日`
+}
