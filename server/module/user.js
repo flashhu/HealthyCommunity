@@ -1,4 +1,10 @@
 const db = require('./db');
+const { genPassword } = require('../util/crypto');
+const config = require('./config');
+
+var client = config.client;
+var argum = config.argum;
+var requestOption = config.requestOption;
 
 /**
  * 确认账户是否存在
@@ -22,20 +28,69 @@ var vertifyUser = async (params, cb) => {
  * @param {function} cb 回调
  */
 var verifyPwd = async (params, cb) => {
-    let where = `where phone='${params.phone}' and passwd='${params.passwd}' and type='${params.type}'`
+    password = genPassword(params.passwd)
+    let where = `where phone='${params.phone}' and passwd='${password}'`
     db.select('user', where, '', '', (err, ret) => {
-        if(err) {
-            cb(err, {code: 0, data:null,msg:'数据查询失败！' });
-        }else{
+        if (err) {
+            cb(err, { code: 0, data: null, msg: '数据查询失败！' });
+        } else {
             if (ret.rows.length > 0) {
-                cb(err, { code: 1, data: params, msg: '登录成功' })
+                user = ret.rows[0]
+                data = { name: user.name, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type }
+                cb(err, { code: 1, data: data, msg: '登录成功' })
             } else {
-                cb(err, { code: 0, data: null, msg: '登录失败！请检查用户名、密码或权限' });
+                cb(err, { code: 0, data: null, msg: '登录失败！请检查用户名或密码！' });
             }
         }
-       
+
     })
 }
 
+/**
+ * 确认手机号是否被注册
+ * @param {object} params 
+ * @param {function} cb 
+ */
+var verifyPhone = async (params, cb) => {
+    let where = `where phone='${params.phone}'`
+    db.select('user', where, '', '', (err, ret) => {
+        if (err) {
+            cb(err, { code: 0, data: null, msg: '数据查询失败！', captcha: null });
+        } else {
+            if (ret.rows.length > 0) {
+                cb(err, { code: 0, data: null, msg: '该手机号已注册！', captcha: null });
+            } else {
+                argum.PhoneNumbers = params.phone
+                captcha = JSON.parse(argum.TemplateParam)
+                captcha.code = Math.random().toFixed(6).slice(-6)
+                argum.TemplateParam = JSON.stringify(captcha);
+                client.request('SendSms', argum, requestOption).then((result) => {
+                    console.log(JSON.stringify(result));
+                }, (ex) => {
+                    console.log(ex);
+                })
+                cb(err, { code: 1, data: params.phone, msg: '已发送', captcha: captcha.code })
+
+            }
+        }
+    })
+}
+/**
+ * 向数据库添加新用户
+ * @param {object} params 
+ * @param {function} cb 
+ */
+
+var addUser = async (params, cb) => {
+    db.add('user', params, (err, ret) => {
+        if (err) {
+            cb(err, { code: 0, data: null, msg: '数据插入失败！' });
+        } else {
+            cb(err, { code: 1, data: params, msg: '注册成功！' });
+        }
+    })
+}
 exports.vertifyUser = vertifyUser;
-exports.verifyPwd   = verifyPwd;
+exports.verifyPwd = verifyPwd;
+exports.verifyPhone = verifyPhone;
+exports.addUser = addUser;

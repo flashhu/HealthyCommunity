@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link, Redirect } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Form, Input, Checkbox, Button, Radio, message } from 'antd'
+import { Form, Input, Checkbox, Button, message } from 'antd'
 import { PhoneOutlined, LockOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'
 import logo from '../../asset/image/favicon.png'
@@ -20,19 +20,17 @@ class Login extends Component {
         let user = token.getUser()
         let storage = window.localStorage;
         console.log(storage.getItem('HEALTH_USER') + ' aaa');
-        console.log(user);
+        // console.log(user);
         if (user) {
             this.props.userStore.login(user)
                 .then(r => {
                     if (r && r.code === 1) {
                         message.success(r.msg)
                     } else if (r && r.code === 0) {
-                        message.error(r.msg)
+                        message.error(r.data)
                     }
                 })
         }
-
-
     }
 
     formRef = React.createRef()
@@ -46,19 +44,16 @@ class Login extends Component {
             this.props.userStore.login(values)
                 .then(r => {
                     if (r && r.code === 1) {
-                        console.log("This is login type: " + this.currUser.type);
+                        // console.log('this is user age ' + this.currUser.age)
                         message.success(r.msg)
                     } else if (r && r.code === 0) {
                         message.error(r.msg)
                     }
                 })
-            console.log(values);
-            // console.log(this.currUser);
-            // console.log(this.props.userStore.login(values));
         });
     }
     onFinish = values => {
-        // console.log('Received values of form: ', values);
+        console.log('Received values of form: ', values);
     };
     onChange = e => {
         this.setState({
@@ -67,12 +62,11 @@ class Login extends Component {
     };
 
     render() {
-
+        
         return (
 
             <div className='g-login'>
-                {this.currUser && this.currUser.type && <Redirect to='admin/' />}
-                {this.currUser && !this.currUser.type && <Redirect to='/' />}
+                {this.currUser && <Redirect to='/' />}
                 <div className='m-login'>
                     <div className='m-logo'>
                         <img src={logo} alt='' />
@@ -121,28 +115,24 @@ class Login extends Component {
                                     className="input"
                                 />
                             </Form.Item>
-                            <Form.Item>
-                                <Form.Item name="remember" valuePropName="checked" className="remember-me" noStyle>
-                                    <Checkbox >记住我</Checkbox>
-                                </Form.Item>
-                                <Form.Item name="type" className="identity">
+
+                            <Form.Item name="remember" valuePropName="checked" className="remember-me" noStyle>
+                                <Checkbox >记住我</Checkbox>
+                            </Form.Item>
+                            {/* <Form.Item name="type" className="identity">
                                     <Radio.Group onChange={this.onChange} value={this.state.value} >
                                         <Radio value={0}>普通用户</Radio>
-                                        <Radio value={1}>管理员</Radio>
+                                        <Radio value={<a href='../../../../admin/src/app/login'></a>}>管理员</Radio>
                                     </Radio.Group>
-                                </Form.Item>
-                                {/* <a className="login-form-forgot" href="">
-                                    忘记密码
-                                </a> */}
+                                </Form.Item> */}
 
-                            </Form.Item>
 
                             <Form.Item>
                                 <Button type="primary" htmlType="submit" className="login-form-button" onClick={this.doLogin} block>
                                     登录
                                 </Button>
 
-                                <Link to="../register">立即注册</Link>
+                                <Link to="/register">立即注册</Link>
                             </Form.Item>
                         </Form>
                     </div>
