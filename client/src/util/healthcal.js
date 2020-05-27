@@ -9,7 +9,7 @@ export let cardStatusCal = (data) => {
     }else{
         status += '1';
     }
-    if (data.heartrat && data.heartrat > 200) {
+    if (data.heartrat && data.heartrat > 150) {
         status += '|3';
     }
     if (data.blodpres_shrink && data.blodpres_relax && data.blodpres_shrink <= 90 && data.blodpres_relax <= 60) {

@@ -42,12 +42,18 @@ class Health{
         const r = await axios.get(urls.API_USER_SCORE + phone);
         if (r && r.status === 200) {
             if (r.data.code) {
-                let data = r.data.data;
-                runInAction(() => {
-                    data['score'] = healthScoreCal(data);
-                    this.scoreList = data;
-                })
-                return r.data.data.status;
+                if(r.data.status) {
+                    let data = r.data.data;
+                    runInAction(() => {
+                        data['score'] = healthScoreCal(data);
+                        this.scoreList = data;
+                    })
+                    return r.data.data.status;
+                }else {
+                    message.error(r.data.msg);
+                    return '';
+                }
+                
             } else {
                 message.error(r.data.msg);
             }

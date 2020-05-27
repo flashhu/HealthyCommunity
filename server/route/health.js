@@ -65,17 +65,22 @@ router.get('/cardData/:phone', (req, res) => {
 
 router.get('/score/:phone', (req, res) => {
     let where = `where uphone='${req.params.phone}'`;
-    db.select('card', where, `order by date desc`, `limit 1`, (err, r1) => {
+    db.select('card', where, `order by date desc`, '', (err, r1) => {
         if(r1.code){
             db.select('health', where, '', '', (err, r2) => {
-                let data = { status: r1.rows[0].status };
-                if (r1.rows[0]) {
-                    data['cardScore'] = r1.rows[0].score;
+                if(r1.rows.length > 0 || r2.rows.length > 0) {
+                    let data = { status: '6' };
+                    if (r1.rows[0]) {
+                        data['cardScore'] = r1.rows[0].score;
+                        data['status'] = r1.rows[0].status;
+                    }
+                    if (r2.rows[0]) {
+                        data['habitScore'] = r2.rows[0].habitScore;
+                    }
+                    res.json({ code: 1, msg: '数据获取成功！', status: true, data: data });
+                }else{
+                    res.json({ code: 1, msg: '数据暂未录入！', status: false})
                 }
-                if (r2.rows[0]) {
-                    data['habitScore'] = r2.rows[0].habitScore;
-                }
-                res.json({code: 1, msg:'数据获取成功！', data: data});
             })
         }else {
             res.json(r1);

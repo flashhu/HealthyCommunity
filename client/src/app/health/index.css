@@ -44,11 +44,12 @@
 
 .m-btn {
   background-color: #fff;
-  color: #1D94B8;
-  border: 1px solid #24B8E6;
+  color: #247FE6;
+  border: 1px solid #247FE6;
   border-radius: 3px;
-  width: 70px;
-  padding: 0 5px;
+  width: 45px;
+  display: flex;
+  justify-content: center;
   height: 28px;
   margin-left: 15px;
   font-size: 14px;
@@ -149,7 +150,7 @@
 
 .normal-font {
   color: #4ACBCB;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .warn {
@@ -158,6 +159,7 @@
 
 .warn-font {
   color: #FF6654;
+  font-size: 20px;
 }
 
 .z-title {

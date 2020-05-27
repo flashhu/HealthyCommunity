@@ -57,16 +57,18 @@ class Health extends Component {
     getData() {
         this.props.healthStore.getCardData(this.currUser.phone)
         .then(r=>{
-            let tempList = r.tempList;
-            let heartList = r.heartList;
-            let bloodList = r.bloodList;
+            let date = r.tempList.length > 0 ? r.tempList[r.tempList.length - 1].date : '暂未';
+            let temp = r.tempList.length > 0 ? r.tempList[r.tempList.length - 1].temp : '??.?';
+            let heartrat = r.heartList.length > 0 ? r.heartList[r.heartList.length - 1].heartrat : '??';;
+            let blodpres_relax = r.bloodList.length > 0 ? r.bloodList[r.bloodList.length - 1].blodpres_relax : '??';;
+            let blodpres_shrink = r.bloodList.length > 0 ? r.bloodList[r.bloodList.length - 1].blodpres_shrink : '???';;
             this.setState({
                 cardData:{
-                    date: tempList[tempList.length - 1].date,
-                    temp: tempList[tempList.length - 1].temp,
-                    heartrat: heartList[heartList.length - 1].heartrat,
-                    blodpres_relax: bloodList[bloodList.length - 1].blodpres_relax,
-                    blodpres_shrink: bloodList[bloodList.length - 1].blodpres_shrink
+                    date: date,
+                    temp: temp,
+                    heartrat: heartrat,
+                    blodpres_relax: blodpres_relax,
+                    blodpres_shrink: blodpres_shrink
                 }
             })
         })
@@ -77,8 +79,15 @@ class Health extends Component {
         .then(r => {
             let list = r.split('|');
             let tipList = [];
-            for (let item of list) {
-                tipList.push(HEALTH_MESSAGE[parseInt(item)]);
+            if(r === '') {
+                tipList.push('还没有登记数据哦(•ᴗ•)', '快点击上方每日打卡，或习惯养成计划，开始你的体验吧~');
+            }else {
+                if (list.length === 1) {
+                    tipList.push('快点击上方每日打卡，记录今天的健康数据吧~');
+                }
+                for (let item of list) {
+                    tipList.push(HEALTH_MESSAGE[parseInt(item)]);
+                }
             }
             this.setState({
                 tipList: tipList
@@ -181,16 +190,16 @@ class Health extends Component {
                                     <HeartChart data={this.cardList ? this.cardList.heartList : {}} />
                                 </TabPane>
                                 <TabPane tab="血压" key="bloodpreasure">
-                                    <BloodChart data={this.cardList ? this.cardList.bloodList : {}}/>
+                                    <BloodChart data={this.cardList ? this.cardList.bloodList : []}/>
                                 </TabPane>
                             </Tabs>
                         </div>
                         <div className="m-card">
                             <div className="z-title bold">健康指数</div>
-                            <div className="m-grade normal">{this.scoreList.score}</div>
+                            <div className={this.scoreList.score !== '??' && this.scoreList.score < 80 ? "m-grade warn":"m-grade normal"}>{this.scoreList.score}</div>
                             <div className="m-tip">
                                 {tipList.map((item) =>
-                                    <p key={item + 'p'}><span className="normal-font" key={item + 'span'}>●</span>{item}</p>
+                                    <p key={item + 'p'}><span className={this.scoreList.score !== '??' && this.scoreList.score < 80 ? "warn-font" : "normal-font"} key={item + 'span'}>●</span>{item}</p>
                                 )}
                             </div>
                         </div>
@@ -199,7 +208,7 @@ class Health extends Component {
                 <div className="m-data">
                     <div className="m-line">
                         <h3 className="m-title bold">今日推荐</h3>
-                        <div className="m-btn">开始打卡</div>
+                        <div className="m-btn">打卡</div>
                     </div>
                     <div className="m-line column space">
                         <div className="m-card middle">
