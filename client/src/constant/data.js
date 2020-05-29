@@ -26,3 +26,16 @@ export const HEALTH_ICON = {
     heartrate: 'https://healthycommunity.oss-cn-hangzhou.aliyuncs.com/img/svg/heartrate.svg',
     blodpres: 'https://healthycommunity.oss-cn-hangzhou.aliyuncs.com/img/svg/bloodpressure.svg'
 }
+
+//健康模块膳食推荐每顿所占比例
+export const HEALTH_MEAL_SCALE = [0.3, 0.4, 0.3]
+
+//健康模块膳食推荐每顿传入的计算主食，肉蛋奶比例 
+export const HEALTH_DIET_SCALE = {
+    breakfast: '0.4|0.45',
+    lunch: '0.5|0.35',
+    dinner: '0.5|0.35'
+}
+
+//健康模块 三餐对应的蔬果摄入
+export const HEALTH_VEGETABLE = [60, 50, 50]

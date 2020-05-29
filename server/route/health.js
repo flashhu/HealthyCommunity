@@ -76,6 +76,9 @@ router.get('/score/:phone', (req, res) => {
                     }
                     if (r2.rows[0]) {
                         data['habitScore'] = r2.rows[0].habitScore;
+                        data['dailyIngest'] = r2.rows[0].dailyIngest;
+                        data['cardNum'] = r2.rows[0].cardNum;
+                        data['cardDate'] = r2.rows[0].cardDate;
                     }
                     res.json({ code: 1, msg: '数据获取成功！', status: true, data: data });
                 }else{
@@ -85,6 +88,58 @@ router.get('/score/:phone', (req, res) => {
         }else {
             res.json(r1);
         }
+    })
+})
+
+router.get('/sports', (req, res)=> {
+    const len = 3;
+    let index = [...Array(20).keys()];
+    const num = index.map((n, i, all) => {
+                  const j = i + Math.floor(Math.random() * (all.length - i));
+                  const v = all[j];
+                  all[j] = n;
+                  return v;
+              }).slice(0, len);
+    let sql = `select * from sports WHERE id = ${num[0]} or id = ${num[1]} or id = ${num[2]}`
+    db.querySQL(sql, (err, r)=>{
+        res.json(r);
+    })
+})
+
+router.post('/foods', (req, res)=> {
+    let params = req.body;
+    let scale = params.scale.split('|').map(Number);
+    let staple = params.ingest * scale[0];
+    let meat = params.ingest * scale[1]; 
+    let vegetable = params.vege;
+    let sql1 = `select * from foods where calorie <= ${staple} and type = '0'`;
+    let sql2 = `select * from foods where calorie <= ${meat} and type = '1'`;
+    let sql3 = `select * from foods where calorie <= ${vegetable} and type = '2'`;
+    db.querySQL(sql1, (err, r1) => {
+        if(r1.code){
+            db.querySQL(sql2, (err, r2) => {
+                if(r2.code){
+                    db.querySQL(sql3, (err, r3) => {
+                        if(r3.code) {
+                            res.json({ code: 1, data: {staple: r1.rows, meat: r2.rows, vegetable: r3.rows}})
+                        }else{
+                            res.json(r3)
+                        }
+                    })
+                }else{
+                    res.json(r2)
+                }
+            })
+        }else{
+            res.json(r1)
+        }
+    })
+})
+
+router.post('/habitCard', (req, res) => {
+    let where = { uphone: req.body.uphone}
+    db.modify('health', req.body, where, (err, r)=>{
+        res.json(r);
     })
 })
 

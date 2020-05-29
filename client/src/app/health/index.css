@@ -1,4 +1,4 @@
-.ant-carousel .slick-slide {
+.m-slide {
   text-align: center;
   padding-top: 30px;
   height: 160px;
@@ -175,6 +175,11 @@
   padding-bottom: 10px;
 }
 
+.m-tip .interval {
+  margin-top: 0;
+  padding: 10px 0;
+}
+
 .m-sum {
   display: flex;
   flex-direction: column;
@@ -211,6 +216,11 @@
   color: #F67E53;
 }
 
+.m-help {
+  color: #999;
+  font-size: 12px;
+}
+
 @media screen and (max-width: 833px) {
   .m-card {
     width: 100%;
@@ -234,5 +244,11 @@
 
   .column {
     flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .m-item {
+    max-width: 182px;
   }
 }

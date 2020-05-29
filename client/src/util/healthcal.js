@@ -1,3 +1,5 @@
+import { HEALTH_DIET_SCALE } from '../constant/data'
+
 // 根据打卡数据 得出每日健康状态
 export let cardStatusCal = (data) => {
     // 1 正常；0 低烧；2 高烧；3 心率过高；4：低血压; 5 高血压
@@ -131,4 +133,41 @@ export let healthScoreCal = (params) => {
         habitScore = 100;
     }
     return parseInt(cardScore * 0.6 + habitScore * 0.4);
+}
+
+//随机抽取某范围中的固定数量的数字 返回数组
+export let randomId = (size, len) => {
+    let index = [...Array(size).keys()];
+    const num = index.map((n, i, all) => {
+        const j = i + Math.floor(Math.random() * (all.length - i));
+        const v = all[j];
+        all[j] = n;
+        return v;
+    }).slice(0, len);
+    return num;
+}
+
+/**
+ * 随机抽取食物序号显示
+ * @param {object} size json {staple: 1, meat: 1, vegetable: 1} 抽取范围大小，如20，则生成数组（0-19）
+ */
+export let randomFoodId = (size) => {
+    let num = [];
+    num.push(randomId(size.staple, 1)[0]);
+    num.push(randomId(size.meat, 1)[0]);
+    num.push(randomId(size.vegetable, 1)[0]);
+    return num;
+}
+
+//计算获得推荐的食物需要显示的信息
+export let getSugstFood = (foodlist, ingest, vege) => {
+    let index = randomFoodId({ staple: foodlist.staple.length, meat: foodlist.meat.length, vegetable: foodlist.vegetable.length });
+    let scale = HEALTH_DIET_SCALE.breakfast.split('|').map(Number);
+    let staplenum = (ingest * scale[0] / foodlist.staple[index[0]].calorie).toFixed(1);
+    let meatnum = (ingest * scale[1] / foodlist.meat[index[1]].calorie).toFixed(1);
+    let vegenum = (vege / foodlist.vegetable[index[2]].calorie).toFixed(1);
+    let sum = staplenum * foodlist.staple[index[0]].calorie + meatnum * foodlist.meat[index[1]].calorie + vegenum * foodlist.vegetable[index[2]].calorie;
+    let food = `${Math.round(staplenum)}${foodlist.staple[index[0]].unit}${foodlist.staple[index[0]].name}，${Math.round(meatnum)}${foodlist.meat[index[1]].unit}${foodlist.meat[index[1]].name}，${Math.round(vegenum)}${foodlist.vegetable[index[2]].unit}${foodlist.vegetable[index[2]].name}`;
+    //90为油脂
+    return { sum: parseInt(sum) + 90, food: food }
 }

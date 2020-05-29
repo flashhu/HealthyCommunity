@@ -9,16 +9,8 @@ class Health{
     cardList = undefined
     @observable
     scoreList = { score: '??' }
-    
-    @action
-    async addCard(params) {
-        const r = await axios.post(urls.API_USER_NEW_CARD, params);
-        if (r && r.status === 200) {
-            return r.data;
-        } else {
-            message.error('网络错误', 0.7);
-        }
-    }
+    @observable
+    isSubmitHabit = false
 
     @action
     async getCardData(phone) {
@@ -44,14 +36,19 @@ class Health{
             if (r.data.code) {
                 if(r.data.status) {
                     let data = r.data.data;
+                    let ingest = !data.dailyIngest ? 1800 : data.dailyIngest;
+                    let isSubmitHabit = !data.dailyIngest ? false : true;
+                    let cardNum = !data.cardNum ? 0 : data.cardNum;
+                    let cardDate = !data.cardDate ? null : data.cardDate;
                     runInAction(() => {
                         data['score'] = healthScoreCal(data);
                         this.scoreList = data;
+                        this.isSubmitHabit = isSubmitHabit;
                     })
-                    return r.data.data.status;
+                    return { status: r.data.data.status, ingest: ingest, cardNum: cardNum, cardDate: cardDate };
                 }else {
                     message.error(r.data.msg);
-                    return '';
+                    return {status: '',  ingest: 1800, cardNum: 0, cardDate: null};
                 }
                 
             } else {
@@ -63,8 +60,48 @@ class Health{
     }
 
     @action
+    async getSports() {
+        const r = await axios.get(urls.API_USER_SUGEST_SPORT);
+        if (r && r.status === 200) {
+            return r.data.rows;
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
+
+    @action
+    async getFoods(params) {
+        const r = await axios.post(urls.API_USER_SUGEST_FOODS, params);
+        if (r && r.status === 200) {
+            return r.data.data;
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
+
+    @action
+    async addCard(params) {
+        const r = await axios.post(urls.API_USER_NEW_CARD, params);
+        if (r && r.status === 200) {
+            return r.data;
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
+
+    @action
     async startHealthPlan(params) {
         const r = await axios.post(urls.API_USER_NEW_HEALTH_PLAN, params);
+        if (r && r.status === 200) {
+            return r.data;
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
+
+    @action
+    async newHabitCard(params) {
+        const r = await axios.post(urls.API_USER_HABIT_CARD, params);
         if (r && r.status === 200) {
             return r.data;
         } else {
