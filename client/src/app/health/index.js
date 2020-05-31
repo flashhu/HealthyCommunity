@@ -8,9 +8,9 @@ import CardDialog from '../../component/CardDialog'
 import TempChart from '../../component/TempChart'
 import HeartChart from '../../component/HeartChart'
 import BloodChart from '../../component/BloodChart'
-import { HEALTH_ICON, HEALTH_MESSAGE, HEALTH_MEAL_SCALE, HEALTH_DIET_SCALE, HEALTH_VEGETABLE } from '../../constant/data'
+import { HEALTH_ICON, HEALTH_MESSAGE, HEALTH_DIET_SCALE, HEALTH_VEGETABLE } from '../../constant/data'
 import { convertD2C, getCurrDate, getCurrTime } from '../../util/date'
-import { getSugstFood } from '../../util/healthcal'
+import { getSugstFood, randomFoodId, getFoodList } from '../../util/healthcal'
 import './index.css'
 
 const { TabPane } = Tabs;
@@ -24,24 +24,8 @@ class Health extends Component {
             showCard: false,
             showHabit: false,
             loadingCard: false,
-            cardData: {
-                date: '暂未',
-                temp: '??.?',
-                heartrat: '??',
-                blodpres_relax: '??',
-                blodpres_shrink: '???'
-            },
             tipList: [],
-            sportsList: [],
             selectId: 0,
-            ingest: {
-                bIngest: 540,
-                lIngest: 720,
-                dIngest: 540,
-            },
-            bFoodList: [],
-            lFoodList: [],
-            dFoodList: [],
             bSugstList: null,
             lSugstList: null,
             dSugstList: null,
@@ -61,8 +45,38 @@ class Health extends Component {
     }
 
     @computed
+    get cardData() {
+        return toJS(this.props.healthStore.cardData);
+    }
+
+    @computed
     get scoreList() {
         return toJS(this.props.healthStore.scoreList);
+    }
+
+    @computed
+    get foodList() {
+        return toJS(this.props.healthStore.foodList);
+    }
+
+    @computed
+    get bSugstList() {
+        return toJS(this.props.healthStore.bSugstList);
+    }
+
+    @computed
+    get lSugstList() {
+        return toJS(this.props.healthStore.lSugstList);
+    }
+
+    @computed
+    get dSugstList() {
+        return toJS(this.props.healthStore.dSugstList);
+    }
+
+    @computed
+    get sportsList() {
+        return toJS(this.props.healthStore.sportsList);
     }
 
     @computed
@@ -70,30 +84,24 @@ class Health extends Component {
         return this.props.healthStore.isSubmitHabit;
     }
 
+    @computed
+    get ingest() {
+        return this.props.healthStore.ingest;
+    }
+
     componentDidMount() {
-        this.getData();
+        //防止切换页面后重复请求相同数据
+        if(!this.cardList.tempList.length){
+            this.getData();
+        }
         this.getScore();
-        this.getSports();
+        if (!this.sportsList.length) { 
+            this.getSports();
+        }
     }
 
     getData() {
-        this.props.healthStore.getCardData(this.currUser.phone)
-        .then(r=>{
-            let date = r.tempList.length > 0 ? r.tempList[r.tempList.length - 1].date : '暂未';
-            let temp = r.tempList.length > 0 ? r.tempList[r.tempList.length - 1].temp : '??.?';
-            let heartrat = r.heartList.length > 0 ? r.heartList[r.heartList.length - 1].heartrat : '??';;
-            let blodpres_relax = r.bloodList.length > 0 ? r.bloodList[r.bloodList.length - 1].blodpres_relax : '??';;
-            let blodpres_shrink = r.bloodList.length > 0 ? r.bloodList[r.bloodList.length - 1].blodpres_shrink : '???';;
-            this.setState({
-                cardData:{
-                    date: date,
-                    temp: temp,
-                    heartrat: heartrat,
-                    blodpres_relax: blodpres_relax,
-                    blodpres_shrink: blodpres_shrink
-                }
-            })
-        })
+        this.props.healthStore.getCardData(this.currUser.phone);
     }
 
     getScore() {
@@ -110,28 +118,23 @@ class Health extends Component {
                 for (let item of list) {
                     tipList.push(HEALTH_MESSAGE[parseInt(item)]);
                 }
-            }
-
-            // 90为油脂
-            let bIngest = parseInt(r.ingest * HEALTH_MEAL_SCALE[0]) - 90;
-            let lIngest = parseInt(r.ingest * HEALTH_MEAL_SCALE[1]) - 90;
-            let dIngest = parseInt(r.ingest * HEALTH_MEAL_SCALE[2]) - 90;
+            }          
 
             let isCard = r.cardDate === getCurrDate() ? true: false;
 
-            //提示语及摄入量
+            //提示语
             this.setState({
                 tipList: tipList,
-                ingest: {
-                    bIngest: bIngest,
-                    lIngest: lIngest,
-                    dIngest: dIngest
-                },
                 cardNum: r.cardNum,
                 isCard: isCard
             })
 
-            this.getFoods(bIngest, lIngest, dIngest);
+            if (!this.foodList.bFoodList.staple.length){
+                //防止切换页面后重复请求相同数据 仅第一次挂载时调用
+                this.getFoods(this.ingest.bIngest, this.ingest.lIngest, this.ingest.dIngest);
+            }else {
+                this.getSugstFoodString();
+            }
         })
     }
 
@@ -141,9 +144,7 @@ class Health extends Component {
             r.map((item) => 
                 item['descrip'] = item.descrip.split('|')
             )
-            this.setState({
-                sportsList: r
-            })
+            this.props.healthStore.setSportsList(r);
         })
     }
     
@@ -152,26 +153,52 @@ class Health extends Component {
         let bparams = { ingest: bIngest, scale: HEALTH_DIET_SCALE.breakfast, vege: HEALTH_VEGETABLE[0] };
         let lparams = { ingest: lIngest, scale: HEALTH_DIET_SCALE.lunch, vege: HEALTH_VEGETABLE[1] };
         let dparams = { ingest: dIngest, scale: HEALTH_DIET_SCALE.dinner, vege: HEALTH_VEGETABLE[2] };
+        let bFoodList = null;
+        let lFoodList = null;
+        let dFoodList = null;
         this.props.healthStore.getFoods(bparams)
         .then(r => {
+            let index = randomFoodId(r);
+            let sugstFood = getFoodList(r, index);
+            bFoodList = r;
+            this.props.healthStore.setBSugstList(sugstFood);
             this.setState({
-                bFoodList: r,
-                bSugstList: getSugstFood(r, bIngest, HEALTH_VEGETABLE[0])
+                bSugstList: getSugstFood(bIngest, HEALTH_VEGETABLE[0], sugstFood)
             })
         })
         this.props.healthStore.getFoods(lparams)
         .then(r => {
+            let index = randomFoodId(r);
+            let sugstFood = getFoodList(r, index);
+            lFoodList =  r;
+            this.props.healthStore.setLSugstList(sugstFood);
             this.setState({
-                lFoodList: r,
-                lSugstList: getSugstFood(r, lIngest, HEALTH_VEGETABLE[1])
+                lSugstList: getSugstFood(lIngest, HEALTH_VEGETABLE[1], sugstFood)
             })
         })
         this.props.healthStore.getFoods(dparams)
         .then(r => {
+            let index = randomFoodId(r);
+            let sugstFood = getFoodList(r, index);
+            dFoodList = r;
+            this.props.healthStore.setDSugstList(sugstFood);
             this.setState({
-                dFoodList: r,
-                dSugstList: getSugstFood(r, dIngest, HEALTH_VEGETABLE[2])
+                dSugstList: getSugstFood(dIngest, HEALTH_VEGETABLE[2], sugstFood)
             })
+        })
+        //等异步获取数据结束
+        setTimeout(() => {
+            if (bFoodList && lFoodList && dFoodList) {
+                this.props.healthStore.setFoodList({ bFoodList: bFoodList, lFoodList: lFoodList, dFoodList: dFoodList });
+            }
+        }, 400);
+    }
+
+    getSugstFoodString() {
+        this.setState({
+            bSugstList: getSugstFood(this.ingest.bIngest, HEALTH_VEGETABLE[0], this.bSugstList),
+            lSugstList: getSugstFood(this.ingest.lIngest, HEALTH_VEGETABLE[1], this.lSugstList),
+            dSugstList: getSugstFood(this.ingest.dIngest, HEALTH_VEGETABLE[2], this.dSugstList)
         })
     }
 
@@ -215,20 +242,26 @@ class Health extends Component {
         }
     }
 
-    changeSugstFood = (type, list, ingest) => {
+    changeSugstFood = (type) => {
         if (type === 'b'){
+            let index = randomFoodId(this.foodList.bFoodList);
+            this.props.healthStore.setBSugstList(getFoodList(this.foodList.lFoodList, index));
             this.setState({
-                bSugstList: getSugstFood(list, ingest, HEALTH_VEGETABLE[0])
+                bSugstList: getSugstFood(this.ingest.bIngest, HEALTH_VEGETABLE[0], this.bSugstList)
             })
         }
         if (type === 'l'){
+            let index = randomFoodId(this.foodList.lFoodList);
+            this.props.healthStore.setLSugstList(getFoodList(this.foodList.lFoodList, index));
             this.setState({
-                lSugstList: getSugstFood(list, ingest, HEALTH_VEGETABLE[1])
+                lSugstList: getSugstFood(this.ingest.lIngest, HEALTH_VEGETABLE[1], this.lSugstList)
             })
         }
         if (type === 'd') {
+            let index = randomFoodId(this.foodList.dFoodList);
+            this.props.healthStore.setDSugstList(getFoodList(this.foodList.dFoodList, index));
             this.setState({
-                dSugstList: getSugstFood(list, ingest, HEALTH_VEGETABLE[2])
+                dSugstList: getSugstFood(this.ingest.dIngest, HEALTH_VEGETABLE[2], this.dSugstList)
             })
         }
     }
@@ -238,11 +271,11 @@ class Health extends Component {
             title: '动作详解',
             content: (
                 <div>
-                    <h2>{this.state.sportsList[id].name}</h2>
-                    <h3>预计时长：{this.state.sportsList[id].time}分钟</h3>
-                    <h3>训练次数：{this.state.sportsList[id].per}×{this.state.sportsList[id].group}组</h3>
+                    <h2>{this.sportsList[id].name}</h2>
+                    <h3>预计时长：{this.sportsList[id].time}分钟</h3>
+                    <h3>训练次数：{this.sportsList[id].per}×{this.sportsList[id].group}组</h3>
                     <h3>要点：</h3>
-                    {this.state.sportsList[id].descrip.map((item) =>
+                    {this.sportsList[id].descrip.map((item) =>
                         <p key={item + 'spdetail'}>● {item}</p>
                     )}
                 </div>
@@ -253,7 +286,7 @@ class Health extends Component {
     }
 
     render() {
-        const { cardData, showHabit, showCard, tipList, sportsList, bSugstList, lSugstList, dSugstList, bFoodList, lFoodList, dFoodList, ingest, cardNum, isCard } = this.state;
+        const { showHabit, showCard, tipList, cardNum, isCard, bSugstList, lSugstList, dSugstList } = this.state;
         const text = '食物的份量参考自Keep, 仅供参考';
 
         return (
@@ -277,7 +310,7 @@ class Health extends Component {
                 {/* 每日打卡弹窗 */}
                 <CardDialog
                     visible = {showCard}
-                    card={cardData.date === convertD2C(getCurrDate())? cardData : null}
+                    card={this.cardData.date === convertD2C(getCurrDate())? this.cardData : null}
                     afterClose={() => this.setState({ showCard: false })}
                     onDialogConfirm={() => { this.getData(); this.getScore(); }}
                 />
@@ -290,7 +323,7 @@ class Health extends Component {
                 <div className="m-data">
                     <div className="m-line">
                         <h3 className="m-title bold">我的数据</h3>
-                        <div className="m-intro">  {cardData.date === '暂未' ? cardData.date :convertD2C(cardData.date)}更新</div>
+                        <div className="m-intro">  {this.cardData.date === '暂未' ? this.cardData.date :convertD2C(this.cardData.date)}更新</div>
                     </div>
                     <div className="m-line space column">
                         <div className="m-card m-line">
@@ -300,7 +333,7 @@ class Health extends Component {
                             />
                             <div className="m-info">
                                 <h3>体温</h3>
-                                <p><span>{cardData.temp}</span> °C</p>
+                                <p><span>{this.cardData.temp}</span> °C</p>
                             </div>
                         </div>
                         <div className="m-card m-line">
@@ -310,7 +343,7 @@ class Health extends Component {
                             />
                             <div className="m-info">
                                 <h3>心率</h3>
-                                <p><span>{cardData.heartrat}</span> bpm</p>
+                                <p><span>{this.cardData.heartrat}</span> bpm</p>
                             </div>
                         </div>
                         <div className="m-card m-line">
@@ -320,7 +353,7 @@ class Health extends Component {
                             />
                             <div className="m-info">
                                 <h3>血压</h3>
-                                <p><span>{cardData.blodpres_shrink}/{cardData.blodpres_relax}</span> mmHg</p>
+                                <p><span>{this.cardData.blodpres_shrink}/{this.cardData.blodpres_relax}</span> mmHg</p>
                             </div>
                         </div>
                     </div>
@@ -376,7 +409,7 @@ class Health extends Component {
                                             <h3>早餐</h3>
                                             <p>{bSugstList.food}</p>
                                         </div>
-                                        <div className="m-change" onClick={() => this.changeSugstFood('b', bFoodList, ingest.bIngest)}>
+                                    <div className="m-change" onClick={() => this.changeSugstFood('b')}>
                                             换一换<span className="green"> <SyncOutlined /></span>
                                         </div>
                                     </div>
@@ -391,7 +424,7 @@ class Health extends Component {
                                             <h3>中餐</h3>
                                             <p>{lSugstList.food}</p>
                                         </div>
-                                    <div className="m-change" onClick={() => this.changeSugstFood('l', lFoodList, ingest.lIngest)}>
+                                    <div className="m-change" onClick={() => this.changeSugstFood('l')}>
                                             换一换<span className="green"> <SyncOutlined /></span>
                                         </div>
                                     </div>
@@ -406,7 +439,7 @@ class Health extends Component {
                                             <h3>晚餐</h3>
                                             <p>{dSugstList.food}</p>
                                         </div>
-                                    <div className="m-change" onClick={() => this.changeSugstFood('d', dFoodList, ingest.dIngest)}>
+                                    <div className="m-change" onClick={() => this.changeSugstFood('d')}>
                                             换一换<span className="green"> <SyncOutlined /></span>
                                         </div>
                                     </div>
@@ -416,8 +449,8 @@ class Health extends Component {
                         <div className="m-card middle">
                             <div className="z-title bold">运动建议</div>
                             <div className="m-tip">
-                                {sportsList.length && 
-                                    sportsList.map((item, i) => 
+                                {this.sportsList.length && 
+                                    this.sportsList.map((item, i) => 
                                         <div className={i === 1 ? "m-line interval border" : "m-line interval"} key={item.name + 'spline'}>
                                             <div className="m-sum" key={item.name + 'spsum'}>
                                                 {item.time}

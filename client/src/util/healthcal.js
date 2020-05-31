@@ -33,7 +33,7 @@ export let cardScoreCal = (data) => {
     list.forEach(function (item) {
         switch (item){
             case '0': case '2':
-                score -= 30;
+                score -= 35;
                 break;
             case '3': case '4':case '5':
                 score -= 5;
@@ -149,9 +149,10 @@ export let randomId = (size, len) => {
 
 /**
  * 随机抽取食物序号显示
- * @param {object} size json {staple: 1, meat: 1, vegetable: 1} 抽取范围大小，如20，则生成数组（0-19）
+ * @param {json} foodlist 
  */
-export let randomFoodId = (size) => {
+export let randomFoodId = (foodlist) => {
+    let size = { staple: foodlist.staple.length, meat: foodlist.meat.length, vegetable: foodlist.vegetable.length };
     let num = [];
     num.push(randomId(size.staple, 1)[0]);
     num.push(randomId(size.meat, 1)[0]);
@@ -160,14 +161,22 @@ export let randomFoodId = (size) => {
 }
 
 //计算获得推荐的食物需要显示的信息
-export let getSugstFood = (foodlist, ingest, vege) => {
-    let index = randomFoodId({ staple: foodlist.staple.length, meat: foodlist.meat.length, vegetable: foodlist.vegetable.length });
+export let getSugstFood = (ingest, vege, sugstFood) => {
     let scale = HEALTH_DIET_SCALE.breakfast.split('|').map(Number);
-    let staplenum = (ingest * scale[0] / foodlist.staple[index[0]].calorie).toFixed(1);
-    let meatnum = (ingest * scale[1] / foodlist.meat[index[1]].calorie).toFixed(1);
-    let vegenum = (vege / foodlist.vegetable[index[2]].calorie).toFixed(1);
-    let sum = staplenum * foodlist.staple[index[0]].calorie + meatnum * foodlist.meat[index[1]].calorie + vegenum * foodlist.vegetable[index[2]].calorie;
-    let food = `${Math.round(staplenum)}${foodlist.staple[index[0]].unit}${foodlist.staple[index[0]].name}，${Math.round(meatnum)}${foodlist.meat[index[1]].unit}${foodlist.meat[index[1]].name}，${Math.round(vegenum)}${foodlist.vegetable[index[2]].unit}${foodlist.vegetable[index[2]].name}`;
+    let staplenum = (ingest * scale[0] / sugstFood.staple.calorie).toFixed(1);
+    let meatnum = (ingest * scale[1] / sugstFood.meat.calorie).toFixed(1);
+    let vegenum = (vege / sugstFood.vegetable.calorie).toFixed(1);
+    let sum = staplenum * sugstFood.staple.calorie + meatnum * sugstFood.meat.calorie + vegenum * sugstFood.vegetable.calorie;
+    let food = `${Math.round(staplenum)}${sugstFood.staple.unit}${sugstFood.staple.name}，${Math.round(meatnum)}${sugstFood.meat.unit}${sugstFood.meat.name}，${Math.round(vegenum)}${sugstFood.vegetable.unit}${sugstFood.vegetable.name}`;
     //90为油脂
     return { sum: parseInt(sum) + 90, food: food }
+}
+
+//获得推荐的食物列表
+export let getFoodList = (foodlist, index) => {
+    return {
+        staple: foodlist.staple[index[0]],
+        meat: foodlist.meat[index[1]],
+        vegetable: foodlist.vegetable[index[2]]
+    }
 }

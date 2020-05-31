@@ -3,24 +3,104 @@ import { message } from 'antd'
 import axios from 'axios'
 import * as urls from '../constant/urls'
 import { healthScoreCal } from '../util/healthcal'
+import { HEALTH_MEAL_SCALE } from '../constant/data'
 
 class Health{
     @observable
-    cardList = undefined
+    cardList = { tempList: [], heartList: [], bloodList: [] }
+    @observable
+    cardData = {
+        date: '暂未',
+        temp: '??.?',
+        heartrat: '??',
+        blodpres_relax: '??',
+        blodpres_shrink: '???' 
+    }
     @observable
     scoreList = { score: '??' }
     @observable
     isSubmitHabit = false
+
+    @observable
+    ingest = {
+        bIngest: 540,
+        lIngest: 720,
+        dIngest: 540,
+    }
+    //所有可用的食物列表
+    @observable
+    foodList = {
+        bFoodList: { staple: [], meat: [], vegetable: [] },
+        lFoodList: { staple: [], meat: [], vegetable: [] },
+        dFoodList: { staple: [], meat: [], vegetable: [] }
+    }
+    //推荐食物（3个）
+    @observable
+    bSugstList = {}
+    @observable
+    lSugstList = {}
+    @observable
+    dSugstList = {}
+    //推荐运动（3个）
+    @observable
+    sportsList = []
+
+    @action
+    setSportsList(sportsList) {
+        runInAction(()=>{
+            this.sportsList = sportsList
+        })
+    }
+
+    @action
+    setFoodList(foodList) {
+        runInAction(() => {
+            this.foodList = foodList
+        })
+    }
+
+    @action
+    setBSugstList(bSugstList) {
+        runInAction(()=>{
+            this.bSugstList = bSugstList
+        })
+    }
+
+    @action
+    setLSugstList(lSugstList) {
+        runInAction(() => {
+            this.lSugstList = lSugstList
+        })
+    }
+
+    @action
+    setDSugstList(dSugstList) {
+        runInAction(() => {
+            this.dSugstList = dSugstList
+        })
+    }
 
     @action
     async getCardData(phone) {
         const r = await axios.get(urls.API_USER_CARD_DATA + phone);
         if (r && r.status === 200) {
             if (r.data.code) {
+                let data = r.data.data;
+                let date = data.tempList.length > 0 ? data.tempList[data.tempList.length - 1].date : '暂未';
+                let temp = data.tempList.length > 0 ? data.tempList[data.tempList.length - 1].temp : '??.?';
+                let heartrat = data.heartList.length > 0 ? data.heartList[data.heartList.length - 1].heartrat : '??';
+                let blodpres_relax = data.bloodList.length > 0 ? data.bloodList[data.bloodList.length - 1].blodpres_relax : '??';
+                let blodpres_shrink = data.bloodList.length > 0 ? data.bloodList[data.bloodList.length - 1].blodpres_shrink : '???';
                 runInAction(() => {
-                    this.cardList = r.data.data;
+                    this.cardList = data;
+                    this.cardData = {
+                        date: date,
+                        temp: temp,
+                        heartrat: heartrat,
+                        blodpres_relax: blodpres_relax,
+                        blodpres_shrink: blodpres_shrink
+                    }
                 })
-                return r.data.data;
             } else {
                 message.error(r.data.msg);
             }
@@ -36,19 +116,25 @@ class Health{
             if (r.data.code) {
                 if(r.data.status) {
                     let data = r.data.data;
+                    data['score'] = healthScoreCal(data);
                     let ingest = !data.dailyIngest ? 1800 : data.dailyIngest;
                     let isSubmitHabit = !data.dailyIngest ? false : true;
                     let cardNum = !data.cardNum ? 0 : data.cardNum;
                     let cardDate = !data.cardDate ? null : data.cardDate;
                     runInAction(() => {
-                        data['score'] = healthScoreCal(data);
                         this.scoreList = data;
                         this.isSubmitHabit = isSubmitHabit;
+                        this.ingest =  {
+                            // 90为油脂
+                            bIngest: parseInt(ingest * HEALTH_MEAL_SCALE[0]) - 90,
+                            lIngest: parseInt(ingest * HEALTH_MEAL_SCALE[1]) - 90,
+                            dIngest: parseInt(ingest * HEALTH_MEAL_SCALE[2]) - 90
+                        }
                     })
-                    return { status: r.data.data.status, ingest: ingest, cardNum: cardNum, cardDate: cardDate };
+                    return { status: r.data.data.status, cardNum: cardNum, cardDate: cardDate };
                 }else {
-                    message.error(r.data.msg);
-                    return {status: '',  ingest: 1800, cardNum: 0, cardDate: null};
+                    // message.error(r.data.msg);
+                    return {status: '', cardNum: 0, cardDate: null};
                 }
                 
             } else {

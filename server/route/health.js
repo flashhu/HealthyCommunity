@@ -93,7 +93,7 @@ router.get('/score/:phone', (req, res) => {
 
 router.get('/sports', (req, res)=> {
     const len = 3;
-    let index = [...Array(20).keys()];
+    let index = Array(20).fill(1).map((v, i) => i + 1);
     const num = index.map((n, i, all) => {
                   const j = i + Math.floor(Math.random() * (all.length - i));
                   const v = all[j];
