@@ -176,6 +176,16 @@ class Health{
     }
 
     @action
+    async addStatus(params) {
+        const r = await axios.post(urls.API_USER_HEALTH_STATUS, params);
+        if (r && r.status === 200) {
+            return r.data;
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
+
+    @action
     async startHealthPlan(params) {
         const r = await axios.post(urls.API_USER_NEW_HEALTH_PLAN, params);
         if (r && r.status === 200) {

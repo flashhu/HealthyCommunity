@@ -1,12 +1,20 @@
 import { HEALTH_DIET_SCALE } from '../constant/data'
 
+export let getTempStatus = (data) => {
+    if (data.temp > 35.5 && data.temp <= 37.3) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 // 根据打卡数据 得出每日健康状态
 export let cardStatusCal = (data) => {
     // 1 正常；0 低烧；2 高烧；3 心率过高；4：低血压; 5 高血压
     let status = '';
     if (data.temp <= 35.5) {
         status += '0';
-    }else if(data.temp >= 37.3) {
+    }else if(data.temp > 37.3) {
         status += '2';
     }else{
         status += '1';

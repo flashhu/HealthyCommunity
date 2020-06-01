@@ -3,6 +3,7 @@ var db = require('../module/db');
 var health = require('../module/health');
 const router = express.Router();
 
+//普通用户
 router.post('/newCard', (req, res) => {
     health.vertifyCard(req.body, (err, r1)=>{
         if(r1.code && r1.status) {
@@ -19,6 +20,15 @@ router.post('/newCard', (req, res) => {
                 res.json(r);
             })
         }
+    })
+})
+
+router.post('/healthStatus', (req, res) => {
+    let sql = `update health 
+                set tempStatus=${req.body.tempStatus}, latestCard='${req.body.latestCard}'
+                where uphone=${req.body.uphone}`;
+    db.querySQL(sql, (err, r) => {
+        res.json(r);
     })
 })
 
@@ -140,6 +150,73 @@ router.post('/habitCard', (req, res) => {
     let where = { uphone: req.body.uphone}
     db.modify('health', req.body, where, (err, r)=>{
         res.json(r);
+    })
+})
+
+
+//管理端
+router.post('/dataList', (req, res) => {
+    let type = parseInt(req.body.type);
+    let sql = '';
+    if(type === 2){ // 所有状态
+        sql = `select name, phone, address, tempStatus, latestCard
+               from user, health
+               where phone = uphone`;
+    } else if (type === 1) { //已打卡
+        sql = `select name, phone, address, tempStatus, latestCard
+               from user, health
+               where phone = uphone and latestCard='${req.body.date}'`;
+    } else { //未打卡
+        sql = `select name, phone, address, tempStatus, latestCard
+               from user, health
+               where phone = uphone and latestCard!='${req.body.date}'`;
+    }
+    db.querySQL(sql, (err, r)=>{
+        res.json(r);
+    })
+})
+
+router.post('/search', (req, res) => {
+    let sql = '';
+    if (req.body.type === 2) { // 所有状态
+        sql = `select name, phone, address, tempStatus, latestCard
+               from user, health
+               where phone = uphone and name='${req.body.name}'`;
+    } else if (req.body.type === 1) { //已打卡
+        sql = `select name, phone, address, tempStatus, latestCard
+               from user, health
+               where phone = uphone and name='${req.body.name}' and latestCard='${req.body.date}'`;
+    } else { //未打卡
+        sql = `select name, phone, address, tempStatus, latestCard
+               from user, health
+               where phone = uphone and name='${req.body.name}' and latestCard!='${req.body.date}'`;
+    }
+    db.querySQL(sql, (err, r) => {
+        res.json(r);
+    })
+})
+
+router.get('/chartData', (req, res)=>{
+    let sql1 = `select latestCard, count(uphone) as num
+                from health h
+                group by latestCard
+                order by latestCard desc`;
+    let sql2 = `select tempStatus, count(uphone) as num
+                from health h
+                group by tempStatus
+                order by tempStatus`;
+    db.querySQL(sql1, (err, r1)=>{
+        if(r1.code){
+            db.querySQL(sql2, (err, r2)=>{
+                if(r2.code){
+                    res.json({ code: 1, data: { completion: r1.rows, tempNormal: r2.rows}});
+                }else{
+                    res.json(r2);
+                }
+            })
+        }else{
+            res.json(r1);
+        }
     })
 })
 

@@ -44,7 +44,7 @@ class BloodChart extends Component {
         
         return (
             <div>
-                <Chart height={260} data={this.convert(this.props.data)} scale={cols} forceFit>
+                <Chart height={260} data={this.convert(this.props.data)} scale={cols} autoFit>
                     <Legend />
                     <Axis name="date" />
                     <Axis

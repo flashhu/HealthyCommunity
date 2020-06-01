@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavLink, withRouter } from 'react-router-dom'
+import { NavLink, withRouter, Redirect } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Menu, Button } from 'antd'

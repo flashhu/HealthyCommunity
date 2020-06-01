@@ -1,9 +1,9 @@
 import userStore from './User'
-import cardStore from './Card'
+import healthStore from './Health'
 import noticeStore from './Notice'
 
 export default {
     userStore,
-    cardStore,
+    healthStore,
     noticeStore,
 }

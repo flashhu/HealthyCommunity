@@ -25,7 +25,7 @@ class HeartChart extends Component {
     render() {
         return (
             <div>
-                <Chart height={260} data={this.props.data} scale={cols} forceFit>
+                <Chart height={260} data={this.props.data} scale={cols} autoFit>
                     <Axis name="date" />
                     <Axis
                         name="heartrat"
