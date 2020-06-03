@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { ArrowUpOutlined, ShoppingCartOutlined } from '@ant-design/icons'
 import { Redirect } from 'react-router-dom' 
-import './index.css'
+import './index.less'
 
 class FixedBar extends Component {
     constructor(props){

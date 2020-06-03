@@ -4,6 +4,7 @@ import loadable from '@loadable/component'
 import NavWrapper from './component/NavWrapper'
 import FixedBar from './component/FixedBar'
 import ContentWrapper from './component/ContentWrapper'
+import ConfWrapper from './component/ConfWrapper'
 // import history from './history'
 
 function App() {
@@ -21,7 +22,12 @@ function App() {
                 <Route path='/service' exact component={loadable(() => import('./app/service'))} />
                 <Route path='/notice' exact component={loadable(() => import('./app/notice'))} />
                 <Route path='/detail/:id' exact component={loadable(() => import('./app/detail'))} />
-                <Route path='/conf' exact component={loadable(() => import('./app/conf'))} />
+                <Route path='/conf' render={() => (
+                  <ConfWrapper>
+                    <Route path='/conf' exact component={loadable(() => import('./app/conf'))} />
+                    <Route path='/conf/order' exact component={loadable(() => import('./app/order'))} />
+                  </ConfWrapper>
+                )} />
               </Switch>
             </ContentWrapper>
             <FixedBar />

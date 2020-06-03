@@ -11,7 +11,7 @@ import BloodChart from '../../component/BloodChart'
 import { HEALTH_ICON, HEALTH_MESSAGE, HEALTH_DIET_SCALE, HEALTH_VEGETABLE } from '../../constant/data'
 import { convertD2C, getCurrDate, getCurrTime } from '../../util/date'
 import { getSugstFood, randomFoodId, getFoodList } from '../../util/healthcal'
-import './index.css'
+import './index.less'
 
 const { TabPane } = Tabs;
 
@@ -186,12 +186,14 @@ class Health extends Component {
                 dSugstList: getSugstFood(dIngest, HEALTH_VEGETABLE[2], sugstFood)
             })
         })
+        
+
         //等异步获取数据结束
         setTimeout(() => {
             if (bFoodList && lFoodList && dFoodList) {
                 this.props.healthStore.setFoodList({ bFoodList: bFoodList, lFoodList: lFoodList, dFoodList: dFoodList });
             }
-        }, 400);
+        }, 600); //时间太短，取不到数据就会报错
     }
 
     getSugstFoodString() {
@@ -245,7 +247,7 @@ class Health extends Component {
     changeSugstFood = (type) => {
         if (type === 'b'){
             let index = randomFoodId(this.foodList.bFoodList);
-            this.props.healthStore.setBSugstList(getFoodList(this.foodList.lFoodList, index));
+            this.props.healthStore.setBSugstList(getFoodList(this.foodList.bFoodList, index));
             this.setState({
                 bSugstList: getSugstFood(this.ingest.bIngest, HEALTH_VEGETABLE[0], this.bSugstList)
             })
@@ -288,7 +290,6 @@ class Health extends Component {
     render() {
         const { showHabit, showCard, tipList, cardNum, isCard, bSugstList, lSugstList, dSugstList } = this.state;
         const text = '食物的份量参考自Keep, 仅供参考';
-
         return (
             <div className="g-health">
                 <Carousel autoplay>

@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Select, Input, Table, Tag } from 'antd';
+import { Select, Input, Table, Tag, Spin } from 'antd';
 import  NormalRateChart from '../../component/NormalRateChart'
 import CompletionRateChart from '../../component/CompletionRateChart'
 import { ADMIN_HEALTH_CARD_TYPE, ADMIN_HEALTH_TEMP_TYPE } from '../../constant/data'
 import { getCurrDate } from '../../util/date'
-import './index.css'
+import './index.less'
 
 const { Option } = Select;
 const { Search } = Input;
@@ -60,7 +60,8 @@ class Health extends Component{
     constructor(props){
         super(props);
         this.state = {
-            cardType: 0
+            cardType: 0,
+            loading: true
         }
     }
 
@@ -81,7 +82,12 @@ class Health extends Component{
 
     componentDidMount() {
         //0 -> 未打卡
-        this.props.healthStore.getData({ type: 0, date: getCurrDate()});
+        this.props.healthStore.getData({ type: 0, date: getCurrDate()})
+        .then(r => {
+            this.setState({
+                loading: false
+            })
+        });
         this.props.healthStore.getChartData();
     }
 
@@ -90,12 +96,28 @@ class Health extends Component{
             cardType: value
         })
         let params = {type: value, date: getCurrDate()};
-        this.props.healthStore.getData(params);
+        this.setState({
+            loading: true
+        })
+        this.props.healthStore.getData(params)
+        .then(r => {
+            this.setState({
+                loading: false
+            })
+        });
     }
 
     handleSearch = (value) => {
         let params = { type: this.state.cardType, name: value, date: getCurrDate() };
-        this.props.healthStore.search(params);
+        this.setState({
+            loading: true
+        })
+        this.props.healthStore.search(params)
+        .then(r => {
+            this.setState({
+                loading: false
+            })
+        });
         this.refs.searchBar.input.state.value = '';
     }
 
@@ -127,13 +149,15 @@ class Health extends Component{
                             allowClear
                         />
                     </div>
-                    <Table 
-                        dataSource={this.dataList} 
-                        columns={columns} 
-                        rowKey={item => item.id + 'table'}
-                        pagination={{ pageSize: 4 }}
-                        className="interval"
-                    />
+                    <Spin spinning={this.state.loading} size="large" delay={200}>
+                        <Table 
+                            dataSource={this.dataList} 
+                            columns={columns} 
+                            rowKey={item => item.id + 'table'}
+                            pagination={{ pageSize: 4 }}
+                            className="interval"
+                        />
+                    </Spin>
                 </div>
             </div>
         )

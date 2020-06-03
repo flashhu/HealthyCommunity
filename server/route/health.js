@@ -181,15 +181,15 @@ router.post('/search', (req, res) => {
     if (req.body.type === 2) { // 所有状态
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and name='${req.body.name}'`;
+               where phone = uphone and name like '%${req.body.name}%'`;
     } else if (req.body.type === 1) { //已打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and name='${req.body.name}' and latestCard='${req.body.date}'`;
+               where phone = uphone and name like '%${req.body.name}%' and latestCard='${req.body.date}'`;
     } else { //未打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and name='${req.body.name}' and latestCard!='${req.body.date}'`;
+               where phone = uphone and name like '%${req.body.name}%' and latestCard!='${req.body.date}'`;
     }
     db.querySQL(sql, (err, r) => {
         res.json(r);

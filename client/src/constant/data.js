@@ -9,6 +9,11 @@ export const ADMIN_MENU_LIST = [
     { name: '公告', path: '/admin/notice' },
 ]
 
+export const USER_CONF_MENU_LIST = [
+    { name: '我的订单', path: '/conf/order' },
+    { name: '账户管理', path: '/conf' }
+]
+
 // 健康状态对应的提示
 export const HEALTH_MESSAGE = [
     '低烧，注意休息，尽早就医',

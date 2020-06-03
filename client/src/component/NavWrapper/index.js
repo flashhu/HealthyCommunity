@@ -2,12 +2,25 @@ import React, { Component } from 'react'
 import { NavLink, withRouter, Redirect } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Menu, Button } from 'antd'
+import { Menu, Button, Dropdown } from 'antd'
 import { ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 
-import { USER_MENU_LIST } from '../../constant/data'
+import { USER_MENU_LIST, USER_CONF_MENU_LIST } from '../../constant/data'
 import logo from '../../asset/image/favicon.png'
-import './index.css'
+import './index.less'
+
+const menu = (
+    <Menu>
+        {USER_CONF_MENU_LIST.map((item) =>
+            <Menu.Item key={item.path + 'user'}>
+                <NavLink to={item.path}>
+                    <span>{item.name}</span>
+                </NavLink>
+            </Menu.Item>
+        )}
+        <Menu.Item>退出登录</Menu.Item>
+    </Menu>
+);
 
 @inject('userStore')
 @observer
@@ -48,9 +61,9 @@ class NavWrapper extends Component {
                                 <NavLink to='/service'>
                                     <ShoppingCartOutlined />
                                 </NavLink>
-                                <NavLink to='/conf'>
+                                <Dropdown overlay={menu} placement="bottomCenter">
                                     <UserOutlined />
-                                </NavLink>
+                                </Dropdown>
                             </div>
                         }
                         {!this.currUser &&
