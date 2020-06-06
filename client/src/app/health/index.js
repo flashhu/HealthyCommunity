@@ -36,7 +36,7 @@ class Health extends Component {
 
     @computed
     get currUser() {
-        return this.props.userStore.currUser;
+        return toJS(this.props.userStore.currUser);
     }
 
     @computed
@@ -101,11 +101,11 @@ class Health extends Component {
     }
 
     getData() {
-        this.props.healthStore.getCardData(this.currUser.phone);
+        this.props.healthStore.getCardData(this.currUser.id);
     }
 
     getScore() {
-        this.props.healthStore.getScore(this.currUser.phone)
+        this.props.healthStore.getScore(this.currUser.id)
         .then(r => {
             let list = r.status.split('|');
             let tipList = [];
@@ -224,7 +224,7 @@ class Health extends Component {
             }else{
                 let cardNum = this.state.cardNum + 1;
                 let date = getCurrDate();
-                let params = { uphone: this.currUser.phone, cardNum: cardNum, cardDate: date };
+                let params = { uid: this.currUser.id, cardNum: cardNum, cardDate: date };
                 this.props.healthStore.newHabitCard(params)
                     .then(r => {
                         if (r.code === 1) {
@@ -232,7 +232,8 @@ class Health extends Component {
                                 cardNum: cardNum,
                                 isCard: true
                             })
-                            message.success('打卡成功！明天继续加油哦~ (●＾o＾●)');
+                            let msg = cardNum === 21 ? '习惯养成计划打卡成功！你变得更棒啦~' : '打卡成功！明天继续加油哦~ (●＾o＾●)';
+                            message.success(msg);
                         } else {
                             message.error('打卡机器开小差了，请再试一次 (ㄒoㄒ)');
                         }

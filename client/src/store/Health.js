@@ -81,8 +81,8 @@ class Health{
     }
 
     @action
-    async getCardData(phone) {
-        const r = await axios.get(urls.API_USER_CARD_DATA + phone);
+    async getCardData(id) {
+        const r = await axios.get(urls.API_USER_CARD_DATA + id);
         if (r && r.status === 200) {
             if (r.data.code) {
                 let data = r.data.data;
@@ -110,8 +110,8 @@ class Health{
     }
 
     @action
-    async getScore(phone) {
-        const r = await axios.get(urls.API_USER_SCORE + phone);
+    async getScore(id) {
+        const r = await axios.get(urls.API_USER_SCORE + id);
         if (r && r.status === 200) {
             if (r.data.code) {
                 if(r.data.status) {

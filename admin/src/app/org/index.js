@@ -63,11 +63,13 @@ class Organize extends Component {
         this.props.userStore.deleteMember(params);
         this.props.userStore.getMemberData()
         .then(r => {
-            this.setState({
-                loading: false,
-                deleteConfirm: false,
-                operatePhone: ''
-            })
+            setTimeout(() => {
+                this.setState({
+                    loading: false,
+                    deleteConfirm: false,
+                    operatePhone: ''
+                }) 
+            }, 500); //防止删除后 搜索添加时仍对应原先列表
         });
     }
 
@@ -138,12 +140,14 @@ class Organize extends Component {
             this.props.userStore.updateMember({ record: this.state.operateMember, type: 1, new: true });
             this.props.userStore.getMemberData()
             .then(r => {
-                this.setState({
-                    loading: false,
-                    showAddBox: false,
-                    addConfirm: false,
-                    resUserList: []
-                })
+                setTimeout(() => {
+                    this.setState({
+                        loading: false,
+                        showAddBox: false,
+                        addConfirm: false,
+                        resUserList: []
+                    })
+                }, 200);
             })
         }
     };

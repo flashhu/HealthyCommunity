@@ -39,7 +39,7 @@ class HabitDialog extends Component {
                 });
                 values['dailyIngest'] = parseInt(getIngest(values));
                 values['habitScore'] = habitScoreCal(values);
-                values['uphone'] = this.currUser.phone;
+                values['uid'] = this.currUser.id;
                 // console.log(values);
 
                 this.props.healthStore.startHealthPlan(values)

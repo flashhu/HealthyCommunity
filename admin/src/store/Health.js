@@ -2,7 +2,7 @@ import { observable, action, runInAction } from 'mobx'
 import { message } from 'antd'
 import axios from 'axios'
 import { API_HEALTH_DATA_LIST, API_HEALTH_SEARCH, API_HEALTH_CHART_DATA } from '../constant/urls'
-import { cardStatusCountCal } from '../util/healthCal'
+import { cardStatusCountCal, healthStatusCountCal } from '../util/healthCal'
 import { getCurrDate } from '../util/date'
 
 class Health{
@@ -32,16 +32,18 @@ class Health{
         const r = await axios.get(API_HEALTH_CHART_DATA);
         if (r && r.status === 200) {
             if (r.data.code) {
+                console.log(r.data.data)
                 let data = r.data.data;
                 let completionData = cardStatusCountCal(data.completion, getCurrDate());
+                let tempNormalData = healthStatusCountCal(data.tempNormal);
                 runInAction(() => {
                     this.completionData = [
                         { type: "未打卡", value: completionData.unfinish },
                         { type: "已打卡", value: completionData.finish }
                     ];
                     this.tempNormalData = [
-                        { type: "体温正常", value: data.tempNormal[1].num },
-                        { type: "体温异常", value: data.tempNormal[0].num }
+                        { type: "体温正常", value: tempNormalData.normal },
+                        { type: "体温异常", value: tempNormalData.unnormal }
                     ]
                 })
             }

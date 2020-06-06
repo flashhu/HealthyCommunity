@@ -36,7 +36,7 @@ var verifyPwd = async (params, cb) => {
         } else {
             if (ret.rows.length > 0) {
                 user = ret.rows[0]
-                data = { name: user.name, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type }
+                data = { id:user.id, name: user.name, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type }
                 cb(err, { code: 1, data: data, msg: '登录成功' })
             } else {
                 cb(err, { code: 0, data: null, msg: '登录失败！请检查用户名或密码！' });

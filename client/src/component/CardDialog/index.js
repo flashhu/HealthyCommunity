@@ -51,10 +51,10 @@ class CardDialog extends Component {
                 });
                 values['status'] = cardStatusCal(values);
                 values['score'] = cardScoreCal(values);
-                values['uphone'] = this.currUser.phone;
+                values['uid'] = this.currUser.id;
                 values['date'] = getCurrDate();
 
-                let healthparams = { uphone: this.currUser.phone , latestCard: values['date'], tempStatus: getTempStatus(values)};
+                let healthparams = { uid: this.currUser.id , latestCard: values['date'], tempStatus: getTempStatus(values)};
                 this.props.healthStore.addStatus(healthparams);
 
                 this.props.healthStore.addCard(values)

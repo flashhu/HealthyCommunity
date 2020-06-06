@@ -11,10 +11,10 @@ router.post('/newCard', (req, res) => {
                 res.json(r);
             })
         }else{
-            let uphone = req.body.uphone;
+            let uid = req.body.uid;
             let date = req.body.date;
             let where = {};
-            where.uphone = uphone;
+            where.uid = uid;
             where.date = date;
             db.modify('card', req.body, where, (err, r)=>{
                 res.json(r);
@@ -24,17 +24,25 @@ router.post('/newCard', (req, res) => {
 })
 
 router.post('/healthStatus', (req, res) => {
-    let sql = `update health 
+    let sql1 = `update health 
                 set tempStatus=${req.body.tempStatus}, latestCard='${req.body.latestCard}'
-                where uphone=${req.body.uphone}`;
-    db.querySQL(sql, (err, r) => {
-        res.json(r);
+                where uid=${req.body.uid}`;
+    health.vertifyHabit(req.body, (err, r1) => {
+        if (r1.status) { //已参与
+            db.querySQL(sql, (err, r) => {
+                res.json(r);
+            })
+        } else {
+            db.add('health', req.body, (err, r) => {
+                res.json(r);
+            })
+        }
     })
 })
 
 router.post('/newPlan', (req, res) => {
     let where = {};
-    where.uphone = req.body.uphone;
+    where.uid = req.body.uid;
     health.vertifyHabit(req.body, (err, r1) => {
         if(r1.status) { //已参与
             db.modify('health', req.body, where, (err, r) => {
@@ -48,10 +56,10 @@ router.post('/newPlan', (req, res) => {
     })
 })
 
-router.get('/cardData/:phone', (req, res) => {
-    let tempSql = `select date, temp from card where uphone = '${req.params.phone}' order by date`;
-    let heartSql = `select date, heartrat from card where uphone = '${req.params.phone}' and heartrat order by date`;
-    let bloodSql = `select date, blodpres_shrink, blodpres_relax from card where uphone = '${req.params.phone}' and blodpres_relax and blodpres_shrink order by date;`;
+router.get('/cardData/:id', (req, res) => {
+    let tempSql = `select date, temp from card where uid = ${req.params.id} order by date`;
+    let heartSql = `select date, heartrat from card where uid = ${req.params.id} and heartrat order by date`;
+    let bloodSql = `select date, blodpres_shrink, blodpres_relax from card where uid = ${req.params.id} and blodpres_relax and blodpres_shrink order by date;`;
     db.querySQL(tempSql, (err, r1) => {
         if(r1.code === 1){
             db.querySQL(heartSql, (err, r2) => {
@@ -73,8 +81,8 @@ router.get('/cardData/:phone', (req, res) => {
     })
 })
 
-router.get('/score/:phone', (req, res) => {
-    let where = `where uphone='${req.params.phone}'`;
+router.get('/score/:id', (req, res) => {
+    let where = `where uid=${req.params.id}`;
     db.select('card', where, `order by date desc`, '', (err, r1) => {
         if(r1.code){
             db.select('health', where, '', '', (err, r2) => {
@@ -147,7 +155,7 @@ router.post('/foods', (req, res)=> {
 })
 
 router.post('/habitCard', (req, res) => {
-    let where = { uphone: req.body.uphone}
+    let where = { uid: req.body.uid}
     db.modify('health', req.body, where, (err, r)=>{
         res.json(r);
     })
@@ -161,15 +169,15 @@ router.post('/dataList', (req, res) => {
     if(type === 2){ // 所有状态
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone`;
+               where id = uid`;
     } else if (type === 1) { //已打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and latestCard='${req.body.date}'`;
+               where id = uid and latestCard='${req.body.date}'`;
     } else { //未打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and latestCard!='${req.body.date}'`;
+               where id = uid and latestCard!='${req.body.date}'`;
     }
     db.querySQL(sql, (err, r)=>{
         res.json(r);
@@ -181,15 +189,15 @@ router.post('/search', (req, res) => {
     if (req.body.type === 2) { // 所有状态
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and name like '%${req.body.name}%'`;
+               where id = uid and name like '%${req.body.name}%'`;
     } else if (req.body.type === 1) { //已打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and name like '%${req.body.name}%' and latestCard='${req.body.date}'`;
+               where id = uid and name like '%${req.body.name}%' and latestCard='${req.body.date}'`;
     } else { //未打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where phone = uphone and name like '%${req.body.name}%' and latestCard!='${req.body.date}'`;
+               where id = uid and name like '%${req.body.name}%' and latestCard!='${req.body.date}'`;
     }
     db.querySQL(sql, (err, r) => {
         res.json(r);
@@ -197,11 +205,11 @@ router.post('/search', (req, res) => {
 })
 
 router.get('/chartData', (req, res)=>{
-    let sql1 = `select latestCard, count(uphone) as num
+    let sql1 = `select latestCard, count(uid) as num
                 from health h
                 group by latestCard
                 order by latestCard desc`;
-    let sql2 = `select tempStatus, count(uphone) as num
+    let sql2 = `select tempStatus, count(uid) as num
                 from health h
                 group by tempStatus
                 order by tempStatus`;
