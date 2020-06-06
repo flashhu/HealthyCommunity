@@ -27,9 +27,9 @@ router.post('/healthStatus', (req, res) => {
     let sql1 = `update health 
                 set tempStatus=${req.body.tempStatus}, latestCard='${req.body.latestCard}'
                 where uid=${req.body.uid}`;
-    health.vertifyHabit(req.body, (err, r1) => {
+    health.vertifyHabitExist(req.body, (err, r1) => {
         if (r1.status) { //已参与
-            db.querySQL(sql, (err, r) => {
+            db.querySQL(sql1, (err, r) => {
                 res.json(r);
             })
         } else {
@@ -43,8 +43,8 @@ router.post('/healthStatus', (req, res) => {
 router.post('/newPlan', (req, res) => {
     let where = {};
     where.uid = req.body.uid;
-    health.vertifyHabit(req.body, (err, r1) => {
-        if(r1.status) { //已参与
+    health.vertifyHabitExist(req.body, (err, r1) => {
+        if(r1.status) { //已存在
             db.modify('health', req.body, where, (err, r) => {
                 res.json(r);
             })
@@ -217,7 +217,13 @@ router.get('/chartData', (req, res)=>{
         if(r1.code){
             db.querySQL(sql2, (err, r2)=>{
                 if(r2.code){
-                    res.json({ code: 1, data: { completion: r1.rows, tempNormal: r2.rows}});
+                    db.selectAll('user', (err, r3)=>{
+                        if(r3.code) {
+                            res.json({ code: 1, data: { completion: r1.rows, tempNormal: r2.rows, userNum: r3.rows.length }});
+                        }else{
+                            res.json(r3);
+                        }
+                    })
                 }else{
                     res.json(r2);
                 }

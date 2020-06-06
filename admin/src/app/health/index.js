@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-import { computed } from 'mobx'
+import { computed, toJS } from 'mobx'
 import { Select, Input, Table, Tag, Spin } from 'antd';
 import  NormalRateChart from '../../component/NormalRateChart'
 import CompletionRateChart from '../../component/CompletionRateChart'
@@ -72,7 +72,7 @@ class Health extends Component{
 
     @computed
     get completionData() {
-        return this.props.healthStore.completionData;
+        return toJS(this.props.healthStore.completionData);
     }
 
     @computed

@@ -32,7 +32,6 @@ class Health{
         const r = await axios.get(API_HEALTH_CHART_DATA);
         if (r && r.status === 200) {
             if (r.data.code) {
-                console.log(r.data.data)
                 let data = r.data.data;
                 let completionData = cardStatusCountCal(data.completion, getCurrDate());
                 let tempNormalData = healthStatusCountCal(data.tempNormal);
@@ -42,8 +41,8 @@ class Health{
                         { type: "已打卡", value: completionData.finish }
                     ];
                     this.tempNormalData = [
+                        { type: "体温异常", value: tempNormalData.unnormal },
                         { type: "体温正常", value: tempNormalData.normal },
-                        { type: "体温异常", value: tempNormalData.unnormal }
                     ]
                 })
             }
