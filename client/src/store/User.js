@@ -33,12 +33,10 @@ class User {
             runInAction(() => {
                 token.saveUser(r.data.data)
                 this.currUser = r.data.data
-                console.log('get from back end, name: '+this.currUser.name);
                 if (this.currUser && !this.currUser.remember) {
                     token.removeUser();
                     console.log("not remember");
                 }
-                // console.log("this is store: "+r.data.data);
             })
             return r.data
         } else {

@@ -169,7 +169,7 @@ class Register extends Component {
                 if (r && r.code === 1) {
                     this.setState({ loading: true });
                     console.log('this is captcha: '+r.captcha)
-                    if (!this.state.time == 0) {
+                    if (this.state.time !== 0) {
                         this.count();
                     }
                     message.success(r.msg)
@@ -222,7 +222,7 @@ class Register extends Component {
                                         validator(rule, value) {
                                             isVal = false;
                                             var phone = '+86' + getFieldValue('phone');
-                                            if (!value || (isValidPhoneNumber(phone) && getFieldValue('phone').length == 11)) {
+                                            if (!value || (isValidPhoneNumber(phone) && getFieldValue('phone').length === 11)) {
                                                 if (value) isVal = true;
                                                 return Promise.resolve();
                                             }

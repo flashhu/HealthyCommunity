@@ -44,3 +44,5 @@ export const HEALTH_DIET_SCALE = {
 
 //健康模块 三餐对应的蔬果摄入
 export const HEALTH_VEGETABLE = [60, 50, 50]
+
+// 服务模块

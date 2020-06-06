@@ -1,17 +1,16 @@
 import React, { Component } from 'react'
+import { Redirect } from 'react-router-dom'
 import { ArrowUpOutlined, ShoppingCartOutlined } from '@ant-design/icons'
-import { Redirect } from 'react-router-dom' 
 import './index.less'
 
 class FixedBar extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
             show: false,
             change: false
         }
     }
-
     componentDidMount() {
         window.addEventListener('scroll', this.changeScrollTopShow)
     }
@@ -25,12 +24,12 @@ class FixedBar extends Component {
 
     changeScrollTopShow = () => {
         if (document.documentElement.scrollTop > 200) {
-            if (this.state.show === false){
+            if (this.state.show === false) {
                 this.setState({
                     show: true
                 })
             }
-        }else {
+        } else {
             if (this.state.show === true) {
                 this.setState({
                     show: false
@@ -60,8 +59,9 @@ class FixedBar extends Component {
         return (
             <div className="g-bar">
                 {this.state.change && <Redirect to='/service' />}
-                {this.state.show && 
+                {this.state.show &&
                     <div>
+                        
                         <div className="m-wrapper" onClick={this.handleCheckCart}>
                             <ShoppingCartOutlined />
                         </div>

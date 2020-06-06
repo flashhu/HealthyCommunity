@@ -19,7 +19,7 @@ class Login extends Component {
 
         let user = token.getUser()
         let storage = window.localStorage;
-        console.log(storage.getItem('HEALTH_USER') + ' aaa');
+        console.log(storage.getItem('HEALTH_USER'));
         // console.log(user);
         if (user) {
             this.props.userStore.login(user)
@@ -44,7 +44,6 @@ class Login extends Component {
             this.props.userStore.login(values)
                 .then(r => {
                     if (r && r.code === 1) {
-                        // console.log('this is user age ' + this.currUser.age)
                         message.success(r.msg)
                     } else if (r && r.code === 0) {
                         message.error(r.msg)

@@ -13,3 +13,5 @@ export const API_USER_SUGEST_SPORT    = API_SERVER + '/health/sports';
 export const API_USER_SUGEST_FOODS    = API_SERVER + '/health/foods'; 
 export const API_USER_HABIT_CARD      = API_SERVER + '/health/habitCard';
 export const API_USER_HEALTH_STATUS   = API_SERVER + '/health/healthStatus';
+export const API_USER_GOODS           = API_SERVER + '/service/goods';
+export const API_USER_SHOPCART        = API_SERVER + '/service/shopCart';

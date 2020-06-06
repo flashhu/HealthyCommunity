@@ -10,6 +10,6 @@ app.use(bodyParser.json())
 
 app.use('/health', require('./route/health'));
 app.use('/user', require('./route/user'));
-
+app.use('/service', require('./route/service'));
 
 app.listen(port, () => console.log(`> Running on localhost:${port}`))
