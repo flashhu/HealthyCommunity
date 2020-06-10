@@ -71,7 +71,7 @@ const formItemLayout = {
             span: 8,
         },
         md: {
-            span: 4,
+            span: 6,
         },
     },
     wrapperCol: {
@@ -82,7 +82,7 @@ const formItemLayout = {
             span: 16,
         },
         md: {
-            span: 16,
+            span: 12,
             offset: 0,
         },
     },
@@ -99,8 +99,8 @@ const tailFormItemLayout = {
             offset: 8,
         },
         md: {
-            span: 16,
-            offset: 4,
+            span: 12,
+            offset: 6,
         },
     },
 };
@@ -115,7 +115,7 @@ class Register extends Component {
             loading: false,
             time: 59,
             phone: '',
-            isable:false,
+            isable: false,
         }
     }
 
@@ -142,9 +142,9 @@ class Register extends Component {
         this.formRef.current.validateFields().then((values) => {
             let address = values.address.join('')
             values.address = address
-            var match = (values.captcha===this.captcha)
-            console.log('this is input: ' + values.captcha + ' this is send: ' + this.captcha+'this is match: '+match);
-            this.props.userStore.register({ name: values.name, phone: values.phone, address: values.address, passwd: values.passwd, type: 0 ,match:match})
+            var match = (values.captcha === this.captcha)
+            console.log('this is input: ' + values.captcha + ' this is send: ' + this.captcha + 'this is match: ' + match);
+            this.props.userStore.register({ name: values.name, phone: values.phone, address: values.address, passwd: values.passwd, type: 0, match: match })
                 .then(r => {
                     if (r && r.code === 1) {
                         message.success(r.msg)
@@ -163,12 +163,12 @@ class Register extends Component {
         })
     }
     doValidateNum = (e) => {
-        this.setState({isable:true})
+        this.setState({ isable: true })
         this.props.userStore.valPhone({ phone: this.state.phone })
             .then(r => {
                 if (r && r.code === 1) {
                     this.setState({ loading: true });
-                    console.log('this is captcha: '+r.captcha)
+                    console.log('this is captcha: ' + r.captcha)
                     if (this.state.time !== 0) {
                         this.count();
                     }
@@ -178,7 +178,7 @@ class Register extends Component {
                 }
             })
     }
-    doReturn = ()=>{
+    doReturn = () => {
         this.props.userStore.logout();
     }
     componentWillUnmount = () => {
@@ -322,7 +322,7 @@ class Register extends Component {
                                                 },
                                             ]}
                                         >
-                                            <Input disabled={!this.state.isable}/>
+                                            <Input disabled={!this.state.isable} />
                                         </Form.Item>
                                     </Col>
                                     <Col span={12}>

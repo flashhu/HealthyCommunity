@@ -28,6 +28,7 @@ function App() {
                     <Route path='/conf/order' exact component={loadable(() => import('./app/order'))} />
                   </ConfWrapper>
                 )} />
+                <Route path='/service/cart' exact component={loadable(()=>import('./app/cart'))}/>
               </Switch>
             </ContentWrapper>
             <FixedBar />

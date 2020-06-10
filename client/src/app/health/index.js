@@ -33,7 +33,7 @@ class Health extends Component {
             isCard: false
         }
     }
-
+    
     @computed
     get currUser() {
         return toJS(this.props.userStore.currUser);

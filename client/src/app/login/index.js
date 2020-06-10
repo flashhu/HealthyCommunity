@@ -18,8 +18,8 @@ class Login extends Component {
         }
 
         let user = token.getUser()
-        let storage = window.localStorage;
-        console.log(storage.getItem('HEALTH_USER'));
+        // let storage = window.localStorage;
+        // console.log(storage.getItem('HEALTH_USER'));
         // console.log(user);
         if (user) {
             this.props.userStore.login(user)

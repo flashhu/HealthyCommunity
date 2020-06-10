@@ -1,6 +1,5 @@
 const express = require('express');
 var db = require('../module/db');
-var service = require('../module/service');
 const router = express.Router();
 
 router.get('/goods', (req, res) => {
@@ -26,6 +25,13 @@ router.get('/goods', (req, res) => {
         } else {
             res.json(r1)
         }
+    })
+})
+
+router.post('/submitOrder', (req, res) => {
+    let params  = req.body;
+    db.add('orders',params,(err,r)=>{
+        res.status(200).json(r);
     })
 })
 

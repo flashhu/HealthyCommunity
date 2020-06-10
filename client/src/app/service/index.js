@@ -8,7 +8,6 @@ import loading from '../../asset/image/loading-arrow.gif'
 import 'antd/dist/antd.css';
 import './index.less'
 
-
 const { CheckableTag } = Tag;
 const tagsData = ['主食', '肉蛋奶', '蔬菜水果'];
 
@@ -90,7 +89,7 @@ class Notice extends Component {
                                     <h3>￥{item.price}</h3>
 
                                     <div className="incr">
-                                        <Button onClick={() => this.increase(item)} shape="circle">
+                                        <Button onClick={() => this.increase(item)} shape="circle" >
                                             <PlusOutlined />
                                         </Button>
                                     </div>
@@ -114,7 +113,7 @@ class Notice extends Component {
                                     <h3>￥{item.price}</h3>
 
                                     <div className="incr">
-                                        <Button onClick={() => this.increase(item)} shape="circle">
+                                        <Button onClick={() => this.increase(item)} shape="circle" >
                                             <PlusOutlined />
                                         </Button>
                                     </div>
@@ -125,12 +124,26 @@ class Notice extends Component {
 
     }
     increase = (item) => {
-        const count = this.state.count + 1;
-        item.sale++;
-        this.props.serviceStore.incrCount();
-        console.log('this is item: ', item.name, 'sale: ', item.sale);
-        this.props.serviceStore.setShopCartList({ name: item.name, sale: item.sale, price: item.price, phone: this.currUser.phone, total: item.sale * item.price });
-        this.setState({ count });
+        var flag = false;
+        this.shopCartList.filter(i => {
+            if (i.name === item.name) {
+                flag = true;
+            }
+            return i.name;
+        })
+        if (!flag) {
+            const count = this.state.count + 1;
+            item.sale++;
+            this.props.serviceStore.incrCount();
+            // console.log('this is item: ', this.goodsList);
+            let price = item.price.toFixed(2);
+            let total = (item.price * item.sale).toFixed(2);
+
+            this.props.serviceStore.addToShopCartList({ key: item.name, name: item.name, sale: item.sale, price: price, url: item.url, total: total });
+            // console.log(this.shopCartList);
+            this.setState({ count });
+        }
+
     };
     handleChange(tag, checked) {
         const { selectedTags } = this.state;
@@ -160,7 +173,7 @@ class Notice extends Component {
                                 <h3>￥{item.price}</h3>
 
                                 <div className="incr">
-                                    <Button onClick={() => this.increase(item)} shape="circle">
+                                    <Button onClick={() => this.increase(item)} shape="circle" >
                                         <PlusOutlined />
                                     </Button>
                                 </div>
@@ -184,7 +197,7 @@ class Notice extends Component {
                                 <h3>￥{item.price}</h3>
 
                                 <div className="incr">
-                                    <Button onClick={() => this.increase(item)} shape="circle">
+                                    <Button onClick={() => this.increase(item)} shape="circle" >
                                         <PlusOutlined />
                                     </Button>
                                 </div>
@@ -215,7 +228,7 @@ class Notice extends Component {
                                 <h3>￥{item.price}</h3>
 
                                 <div className="incr">
-                                    <Button onClick={() => this.increase(item)} shape="circle">
+                                    <Button onClick={() => this.increase(item)} shape="circle" >
                                         <PlusOutlined />
                                     </Button>
                                 </div>
@@ -239,7 +252,7 @@ class Notice extends Component {
                                 <h3>￥{item.price}</h3>
 
                                 <div className="incr">
-                                    <Button onClick={() => this.increase(item)} shape="circle">
+                                    <Button onClick={() => this.increase(item)} shape="circle" >
                                         <PlusOutlined />
                                     </Button>
                                 </div>
@@ -270,7 +283,7 @@ class Notice extends Component {
                                 <h3>￥{item.price}</h3>
 
                                 <div className="incr">
-                                    <Button onClick={() => this.increase(item)} shape="circle">
+                                    <Button onClick={() => this.increase(item)} shape="circle" >
                                         <PlusOutlined />
                                     </Button>
                                 </div>
@@ -294,7 +307,7 @@ class Notice extends Component {
                                 <h3>￥{item.price}</h3>
 
                                 <div className="incr">
-                                    <Button onClick={() => this.increase(item)} shape="circle">
+                                    <Button onClick={() => this.increase(item)} shape="circle" >
                                         <PlusOutlined />
                                     </Button>
                                 </div>

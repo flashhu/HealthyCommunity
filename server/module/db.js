@@ -152,7 +152,7 @@ var add = async (table, params, cb) => {
             let valList = []
             prepareParm(params, fieldList, valList, [])
             sql = `insert into ${table} (${fieldList.join(',')}) values(${valList.join(',')})`;
-            // console.log(sql)
+            console.log(sql)
             conn.query(sql, (err, rows) => {
                 if (err) {
                     console.log('SQL error', err)

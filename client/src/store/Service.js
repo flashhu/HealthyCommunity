@@ -6,31 +6,74 @@ class Service {
     @observable
     goodsList = { main: [], mmne: [], vegetables: [] }
     @observable
-    orderList = undefined
+    orderList = []
     @observable
     shopCartList = []
     @observable
     count = 0
-
+    @action
+    setCount(count) {
+        this.count = count;
+    }
     @action
     incrCount() {
         this.count++;
     }
+    @action
+    decrCount() {
+        this.count--;
+    }
+    @action
+    resetCount() {
+        this.count = 0;
+    }
+    @action
+    addToShopCartList(item) {
+        var list = this.shopCartList;
+        list.push(item);
+        if (list.length > 0) {
+            // console.log(item.name)
+            list.filter((i) => {
+                if (i.name === item.name) {
+                    if (i.sale > item.sale) {
+                        i.sale += item.sale;
+                        i.total = i.sale * i.price;
+                    } else {
+                        i.sale = item.sale
+                        i.total = i.sale * i.price;
+                    }
+                }
+                return list;
+            })
+
+            for (var i = 0; i < list.length - 1; i++) {
+                for (var j = i + 1; j < list.length; j++) {
+                    if (list[i].name === list[j].name) {
+                        list.splice(j, 1);
+                    }
+                }
+            }
+        }
+        //this.shopCartList=list;
+    }
 
     @action
     setShopCartList(shopCartList) {
-        var list = this.shopCartList;
-        if(list.length>0){
-            var end = list[list.length - 1];
-            if (shopCartList.name === end.name) {
-                // console.log('this is end:',end);
-                list.pop();
-            }
-        }
-        list.push(shopCartList);
-
+        this.shopCartList = shopCartList;
     }
-
+    @action
+    setOrderList(orderList) {
+        this.orderList = orderList
+    }
+    @action
+    async submitOrder(params) {
+        const r = await axios.post(urls.APT_USER_SUBMIT_ORDER, params);
+        if (r && r.status === 200) {
+            return r.data;
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
     @action
     async getGoods() {
         const r = await axios.get(urls.API_USER_GOODS);

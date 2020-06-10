@@ -7,7 +7,7 @@ class User {
     @observable
     currUser = undefined
     captcha = undefined
- 
+
     @action
     async startHealthPlan(params) {
         const r = await axios.post(urls.API_USER_NEW_HEALTH_PLAN, params);
@@ -56,7 +56,10 @@ class User {
 
     @action
     logout() {
-        token.removeUser()
+        token.removeUser();
+        this.currUser = undefined
+        
+        
     }
 }
 
