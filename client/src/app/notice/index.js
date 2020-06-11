@@ -1,29 +1,109 @@
-import React, { Component } from 'react'
+import React, { Component} from 'react'
+import { Link } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
-import { computed } from 'mobx'
+import { computed, toJS } from 'mobx'
+import { Input, Table } from 'antd'
+import './index.less'
 
-@inject('noticeStore', 'userStore')
+const { Search } = Input;
+
+@inject('noticeStore')
 @observer
-class Notice extends Component {
-    @computed
-    get currUser() {
-        return this.props.userStore.currUser;
+class Notice extends Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            cardType: 0,
+        }
     }
 
     @computed
     get noticeList() {
-        return this.props.noticeStore.noticeList;
+        return toJS(this.props.noticeStore.noticeList);
     }
 
+    componentDidMount() {
+        this.props.noticeStore.getNoticeData();
+    }
+
+    handleSearch = (value) => {
+        if( value === '' ) {
+            this.props.noticeStore.getNoticeData();
+        }else{
+            console.log(value);
+            let params = { title: value };
+            this.props.noticeStore.search(params)
+            .then(r => {
+            });
+        }
+        this.refs.searchBar.input.state.value = '';
+    }
+
+    getArticle() {
+        this.props.noticeStore.getNoticeData(this.noticeList.id);
+    }
+
+    columns = [
+        {
+            title: '标题',
+            dataIndex: 'title',
+            key: 'title',
+            render: (d, record) => 
+                <Link to={`/detail/${record.id}`}>
+                    <span>
+                        {record.title}
+                    </span>
+                </Link>
+        },
+        {
+            title: '摘要',
+            dataIndex: 'content',
+            key: 'content',
+            render: item => {
+                return (<div
+                    content={item}
+                    style={{maxWidth: '300px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',
+                        wordWrap: 'break-word', wordBreak: 'break-all'}}
+                >
+                    {item}
+                </div>);
+            }
+        },
+        {
+            title: '发布时间',
+            dataIndex: 'time',
+            key: 'time',
+            responsive: ['md']
+        },
+  ];
+
     render() {
+        this.getArticle();
+        let id = this.props.match.params.id;
         return (
             <div className="g-notice">
-                <div>user notice page</div>
-                <div>{this.currUser.name}</div>
-                <div>{this.noticeList}</div>
+                <div className="m-table interval">
+                    <div className="m-line interval">
+                        <Search 
+                            ref="searchBar"
+                            placeholder="标题" 
+                            onSearch={value => this.handleSearch(value)} 
+                            style={{width: 250, paddingBottom:10}} 
+                            enterButton 
+                            allowClear
+                        />
+                    </div>
+                    <Table
+                        columns={this.columns} 
+                        dataSource={this.noticeList}
+                        rowKey={item => item.id + 'notice'}
+                        pagination={{ pageSize: 8 }}
+                    />
+                </div>
             </div>
         )
     }
-}
+  }
+
 
 export default Notice

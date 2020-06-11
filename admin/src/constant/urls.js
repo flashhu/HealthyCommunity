@@ -10,3 +10,8 @@ export const API_HEALTH_CHART_DATA = API_SERVER + '/health/chartData';
 export const API_MEMBER_DATA = API_SERVER + '/user/memberData';
 export const API_UPDATE_MEMBER = API_SERVER + '/user/updateMember';
 export const API_DELETE_MEMBER = API_SERVER + '/user/deleteMember/';
+
+//notice
+export const API_NOTICE_DATA = API_SERVER + '/notice/noticeData';
+export const API_NOTICE_SEARCH = API_SERVER + '/notice/search';
+export const API_DELETE_NOTICE = API_SERVER + '/notice/deleteNotice/';
