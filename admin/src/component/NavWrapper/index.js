@@ -62,7 +62,9 @@ class NavWrapper extends Component {
                         {this.currUser &&
                             <div className="m-icon">
                                 <Dropdown overlay={menu} placement="bottomCenter">
-                                    <UserOutlined />
+                                    <NavLink to='/conf'>
+                                        <UserOutlined />
+                                    </NavLink>
                                 </Dropdown>
                             </div>
                         }

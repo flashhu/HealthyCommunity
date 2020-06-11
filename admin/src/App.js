@@ -10,7 +10,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path='/login' exact component={loadable(() => import('./app/login'))} />>
+        <Route path='/login' exact component={loadable(() => import('./app/login'))} />
         <Route path='/register' exact component={loadable(() => import('./app/register'))} />
         <Route path='/' render={() => (
           <div className="app-root">

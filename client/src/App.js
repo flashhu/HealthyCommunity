@@ -11,7 +11,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path='/login' component={loadable(() => import('./app/login'))} />>
+        <Route path='/login' component={loadable(() => import('./app/login'))} />
         <Route path='/register' component={loadable(() => import('./app/register'))} />
         <Route path='/' render={() => (
           <div className="app-root">
@@ -25,7 +25,6 @@ function App() {
                 <Route path='/conf' render={() => (
                   <ConfWrapper>
                     <Route path='/conf' exact component={loadable(() => import('./app/conf'))} />
-                    <Route path='/conf/order' exact component={loadable(() => import('./app/order'))} />
                   </ConfWrapper>
                 )} />
                 <Route path='/service/cart' exact component={loadable(()=>import('./app/cart'))}/>

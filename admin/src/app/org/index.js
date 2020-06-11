@@ -60,17 +60,19 @@ class Organize extends Component {
             loading: true
         })
         let params = { phone: this.state.operateMember.phone, isCurr: false }
-        this.props.userStore.deleteMember(params);
-        this.props.userStore.getMemberData()
-        .then(r => {
-            setTimeout(() => {
-                this.setState({
-                    loading: false,
-                    deleteConfirm: false,
-                    operatePhone: ''
-                }) 
-            }, 500); //防止删除后 搜索添加时仍对应原先列表
-        });
+        this.props.userStore.deleteMember(params)
+        .then( r => {
+            this.props.userStore.getMemberData()
+                .then(r => {
+                    setTimeout(() => {
+                        this.setState({
+                            loading: false,
+                            deleteConfirm: false,
+                            operatePhone: ''
+                        })
+                    }, 500); //防止删除后 搜索添加时仍对应原先列表
+                });
+        })
     }
 
     handleDelCancel = () => {
@@ -92,14 +94,7 @@ class Organize extends Component {
         })
         let params = { phone: this.state.operateMember.phone, isCurr: true }
         this.props.userStore.deleteMember(params);
-        this.props.userStore.getMemberData()
-        .then(r => {
-            this.setState({
-                loading: false,
-                outConfirm: false,
-                operatePhone: ''
-            })
-        });
+        //logout
     }
 
     handleOutCancel = () => {
@@ -137,17 +132,19 @@ class Organize extends Component {
             this.setState({
                 loading: true
             })
-            this.props.userStore.updateMember({ record: this.state.operateMember, type: 1, new: true });
-            this.props.userStore.getMemberData()
-            .then(r => {
-                setTimeout(() => {
-                    this.setState({
-                        loading: false,
-                        showAddBox: false,
-                        addConfirm: false,
-                        resUserList: []
+            this.props.userStore.updateMember({ record: this.state.operateMember, type: 1, new: true })
+            .then( r=> {
+                this.props.userStore.getMemberData()
+                    .then(r => {
+                        setTimeout(() => {
+                            this.setState({
+                                loading: false,
+                                showAddBox: false,
+                                addConfirm: false,
+                                resUserList: []
+                            })
+                        }, 200);
                     })
-                }, 200);
             })
         }
     };
@@ -272,7 +269,7 @@ class Organize extends Component {
                                         <List.Item className="m-list" onClick={() => this.handleSelectMamber(item)}>
                                             <List.Item.Meta
                                                 title={item.name}
-                                                description={item.phone}
+                                                description={item.type===0 ? item.phone : '已加入管理员'}
                                             />
                                         </List.Item>
                                     )}

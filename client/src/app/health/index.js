@@ -33,7 +33,10 @@ class Health extends Component {
             isCard: false
         }
     }
-    
+
+    //判断该组件是否已挂载 需要更新 state
+    _isMounted = false;
+
     @computed
     get currUser() {
         return toJS(this.props.userStore.currUser);
@@ -90,6 +93,7 @@ class Health extends Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         //防止切换页面后重复请求相同数据
         if(!this.cardList.tempList.length){
             this.getData();
@@ -98,6 +102,10 @@ class Health extends Component {
         if (!this.sportsList.length) { 
             this.getSports();
         }
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     getData() {
@@ -123,11 +131,13 @@ class Health extends Component {
             let isCard = r.cardDate === getCurrDate() ? true: false;
 
             //提示语
-            this.setState({
-                tipList: tipList,
-                cardNum: r.cardNum,
-                isCard: isCard
-            })
+            if(this._isMounted){
+                this.setState({
+                    tipList: tipList,
+                    cardNum: r.cardNum,
+                    isCard: isCard
+                })
+            }
 
             if (!this.foodList.bFoodList.staple.length){
                 //防止切换页面后重复请求相同数据 仅第一次挂载时调用
@@ -162,9 +172,11 @@ class Health extends Component {
             let sugstFood = getFoodList(r, index);
             bFoodList = r;
             this.props.healthStore.setBSugstList(sugstFood);
-            this.setState({
-                bSugstList: getSugstFood(bIngest, HEALTH_VEGETABLE[0], sugstFood)
-            })
+            if(this._isMounted){
+                this.setState({
+                    bSugstList: getSugstFood(bIngest, HEALTH_VEGETABLE[0], sugstFood)
+                })
+            }
         })
         this.props.healthStore.getFoods(lparams)
         .then(r => {
@@ -172,9 +184,11 @@ class Health extends Component {
             let sugstFood = getFoodList(r, index);
             lFoodList =  r;
             this.props.healthStore.setLSugstList(sugstFood);
-            this.setState({
-                lSugstList: getSugstFood(lIngest, HEALTH_VEGETABLE[1], sugstFood)
-            })
+            if(this._isMounted){
+                this.setState({
+                    lSugstList: getSugstFood(lIngest, HEALTH_VEGETABLE[1], sugstFood)
+                })
+            }
         })
         this.props.healthStore.getFoods(dparams)
         .then(r => {
@@ -182,9 +196,11 @@ class Health extends Component {
             let sugstFood = getFoodList(r, index);
             dFoodList = r;
             this.props.healthStore.setDSugstList(sugstFood);
-            this.setState({
-                dSugstList: getSugstFood(dIngest, HEALTH_VEGETABLE[2], sugstFood)
-            })
+            if(this._isMounted){
+                this.setState({
+                    dSugstList: getSugstFood(dIngest, HEALTH_VEGETABLE[2], sugstFood)
+                })
+            }
         })
         
 
@@ -205,12 +221,12 @@ class Health extends Component {
     }
 
     showListDialog = (type) => {
-        if (type === 'card') {
+        if (type === 'card' && this._isMounted) {
             this.setState({
                 showCard: true
             })
         }
-        if (type === 'habit') {
+        if (type === 'habit' && this._isMounted) {
             this.setState({
                 showHabit: true
             })
@@ -227,7 +243,7 @@ class Health extends Component {
                 let params = { uid: this.currUser.id, cardNum: cardNum, cardDate: date };
                 this.props.healthStore.newHabitCard(params)
                     .then(r => {
-                        if (r.code === 1) {
+                        if (r.code === 1 && this._isMounted) {
                             this.setState({
                                 cardNum: cardNum,
                                 isCard: true
@@ -249,23 +265,29 @@ class Health extends Component {
         if (type === 'b'){
             let index = randomFoodId(this.foodList.bFoodList);
             this.props.healthStore.setBSugstList(getFoodList(this.foodList.bFoodList, index));
-            this.setState({
-                bSugstList: getSugstFood(this.ingest.bIngest, HEALTH_VEGETABLE[0], this.bSugstList)
-            })
+            if(this._isMounted) {            
+                this.setState({
+                    bSugstList: getSugstFood(this.ingest.bIngest, HEALTH_VEGETABLE[0], this.bSugstList)
+                })
+            }
         }
         if (type === 'l'){
             let index = randomFoodId(this.foodList.lFoodList);
             this.props.healthStore.setLSugstList(getFoodList(this.foodList.lFoodList, index));
-            this.setState({
-                lSugstList: getSugstFood(this.ingest.lIngest, HEALTH_VEGETABLE[1], this.lSugstList)
-            })
+            if (this._isMounted) {  
+                this.setState({
+                    lSugstList: getSugstFood(this.ingest.lIngest, HEALTH_VEGETABLE[1], this.lSugstList)
+                })
+            }
         }
         if (type === 'd') {
             let index = randomFoodId(this.foodList.dFoodList);
             this.props.healthStore.setDSugstList(getFoodList(this.foodList.dFoodList, index));
-            this.setState({
-                dSugstList: getSugstFood(this.ingest.dIngest, HEALTH_VEGETABLE[2], this.dSugstList)
-            })
+            if (this._isMounted) {  
+                this.setState({
+                    dSugstList: getSugstFood(this.ingest.dIngest, HEALTH_VEGETABLE[2], this.dSugstList)
+                })
+            }
         }
     }
 
