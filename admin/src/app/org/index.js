@@ -89,13 +89,16 @@ class Organize extends Component {
     }
 
     handleOutOk = () => {
-        this.setState({
-            loading: true
-        })
-        let params = { phone: this.state.operateMember.phone, isCurr: true }
-        this.props.userStore.deleteMember(params);
-        //logout
-        this.props.userStore.logout();
+        if(this.memberList.length > 1) {
+            console.log(this.memberList.length);
+            let params = { phone: this.state.operateMember.phone, isCurr: true }
+            this.props.userStore.deleteMember(params);
+            //logout
+            this.props.userStore.logout();
+        }else {
+            message.error('当前组织仅一人，不可退出！');
+            this.handleOutCancel();
+        }
     }
 
     handleOutCancel = () => {

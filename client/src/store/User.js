@@ -9,16 +9,6 @@ class User {
     captcha = undefined
 
     @action
-    async startHealthPlan(params) {
-        const r = await axios.post(urls.API_USER_NEW_HEALTH_PLAN, params);
-        if (r && r.status === 200) {
-            return r.data;
-        } else {
-            message.error('网络错误', 0.7);
-        }
-    }
-
-    @action
     async register(user) {
         const r = await axios.post(urls.API_USER_REGISTER, user)
         if (r && r.status === 200) {
