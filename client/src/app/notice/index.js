@@ -19,7 +19,7 @@ class Notice extends Component {
         return (
             <div className="g-notice">
                 <div>user notice page</div>
-                <div>{this.currUser.name}</div>
+                <div>{this.currUser && this.currUser.name}</div>
                 <div>{this.noticeList}</div>
             </div>
         )

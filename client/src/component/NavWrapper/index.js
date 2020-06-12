@@ -44,6 +44,7 @@ class NavWrapper extends Component {
     get count() {
         return this.props.serviceStore.count;
     }
+    
     doLogout = () => {
         this.props.userStore.logout();
     }

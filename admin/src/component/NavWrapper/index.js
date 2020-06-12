@@ -9,19 +9,6 @@ import { ADMIN_MENU_LIST, ADMIN_CONF_MENU_LIST } from '../../constant/data'
 import logo from '../../asset/image/favicon.png'
 import './index.less'
 
-const menu = (
-    <Menu>
-        {ADMIN_CONF_MENU_LIST.map((item) =>
-            <Menu.Item key={item.path + 'user'}>
-                <NavLink to={item.path}>
-                    <span>{item.name}</span>
-                </NavLink>
-            </Menu.Item>
-        )}
-        <Menu.Item>退出登录</Menu.Item>
-    </Menu>
-);
-
 @inject('userStore')
 @observer
 class NavWrapper extends Component {
@@ -30,7 +17,22 @@ class NavWrapper extends Component {
     get currUser() {
         return this.props.userStore.currUser;
     }
-
+    
+    doLogout = () => {
+        this.props.userStore.logout();
+    }
+    menu = (
+        <Menu>
+            {ADMIN_CONF_MENU_LIST.map((item) =>
+                <Menu.Item key={item.path + 'user'}>
+                    <NavLink to={item.path}>
+                        <span>{item.name}</span>
+                    </NavLink>
+                </Menu.Item>
+            )}
+            <Menu.Item ><a href='/' onClick={this.doLogout} >退出登录</a></Menu.Item>
+        </Menu>
+    );
     render() {
         // 通过this.props使用history
         const path = this.props.location.pathname;
@@ -44,9 +46,9 @@ class NavWrapper extends Component {
                             <img src={logo} alt='logo' />
                         </div>
                     </NavLink>
-                    <Menu 
-                        theme="light" 
-                        mode="horizontal" 
+                    <Menu
+                        theme="light"
+                        mode="horizontal"
                         defaultSelectedKeys={ADMIN_MENU_LIST[0].name}
                         selectedKeys={[path]}
                     >
@@ -61,7 +63,7 @@ class NavWrapper extends Component {
                     <div className="right">
                         {this.currUser &&
                             <div className="m-icon">
-                                <Dropdown overlay={menu} placement="bottomCenter">
+                                <Dropdown overlay={this.menu} placement="bottomCenter">
                                     <NavLink to='/conf'>
                                         <UserOutlined />
                                     </NavLink>

@@ -41,11 +41,11 @@ class Organize extends Component {
 
     componentDidMount() {
         this.props.userStore.getMemberData()
-        .then(r => {
-            this.setState({
-                loading: false
-            })
-        });
+            .then(r => {
+                this.setState({
+                    loading: false
+                })
+            });
     }
 
     handleDel = (record) => {
@@ -61,18 +61,18 @@ class Organize extends Component {
         })
         let params = { phone: this.state.operateMember.phone, isCurr: false }
         this.props.userStore.deleteMember(params)
-        .then( r => {
-            this.props.userStore.getMemberData()
-                .then(r => {
-                    setTimeout(() => {
-                        this.setState({
-                            loading: false,
-                            deleteConfirm: false,
-                            operatePhone: ''
-                        })
-                    }, 500); //防止删除后 搜索添加时仍对应原先列表
-                });
-        })
+            .then(r => {
+                this.props.userStore.getMemberData()
+                    .then(r => {
+                        setTimeout(() => {
+                            this.setState({
+                                loading: false,
+                                deleteConfirm: false,
+                                operatePhone: ''
+                            })
+                        }, 500); //防止删除后 搜索添加时仍对应原先列表
+                    });
+            })
     }
 
     handleDelCancel = () => {
@@ -104,7 +104,7 @@ class Organize extends Component {
     }
 
     handleChangeSelect = (value, record) => {
-        this.props.userStore.updateMember({record: record, type: value, new: false});
+        this.props.userStore.updateMember({ record: record, type: value, new: false });
         this.props.userStore.getMemberData();
     }
 
@@ -113,12 +113,12 @@ class Organize extends Component {
             this.setState({
                 resUserList: []
             })
-        }else {
+        } else {
             this.setState({
                 resUserList: selectMatchItem(this.userList, e.target.value)
             })
         }
-        
+
     }
 
     handleAdd = () => {
@@ -133,24 +133,24 @@ class Organize extends Component {
                 loading: true
             })
             this.props.userStore.updateMember({ record: this.state.operateMember, type: 1, new: true })
-            .then( r=> {
-                this.props.userStore.getMemberData()
-                    .then(r => {
-                        setTimeout(() => {
-                            this.setState({
-                                loading: false,
-                                showAddBox: false,
-                                addConfirm: false,
-                                resUserList: []
-                            })
-                        }, 200);
-                    })
-            })
+                .then(r => {
+                    this.props.userStore.getMemberData()
+                        .then(r => {
+                            setTimeout(() => {
+                                this.setState({
+                                    loading: false,
+                                    showAddBox: false,
+                                    addConfirm: false,
+                                    resUserList: []
+                                })
+                            }, 200);
+                        })
+                })
         }
     };
 
     handleAddCancel = e => {
-        if(!this.state.addConfirm) {
+        if (!this.state.addConfirm) {
             this.refs.searchUser.state.value = '';
         }
         this.setState({
@@ -161,17 +161,17 @@ class Organize extends Component {
     };
 
     handleSelectMamber = (item) => {
-        if(item.type === 0){
+        if (item.type === 0) {
             this.refs.searchUser.state.value = '';
             this.setState({
                 addConfirm: true,
                 operateMember: item
             })
-        }else{
+        } else {
             message.error('该成员已在管理员组织中！')
         }
     }
-     
+
     columns = [
         {
             title: '姓名',
@@ -188,13 +188,13 @@ class Organize extends Component {
             key: 'type',
             dataIndex: 'type',
             responsive: ['md'],
-            render: (d, record) => 
+            render: (d, record) =>
                 <span>
-                    {    
-                        this.currUser.type === 2 &&
-                        <Select 
-                            defaultValue={ADMIN_MEMBER_TYPE[d].name} 
-                            style={{ width: 120 }} 
+                    {
+                        this.currUser && this.currUser.type === 2 &&
+                        <Select
+                            defaultValue={ADMIN_MEMBER_TYPE[d].name}
+                            style={{ width: 120 }}
                             bordered={false}
                             onChange={(value) => this.handleChangeSelect(value, record)}
                         >
@@ -203,10 +203,10 @@ class Organize extends Component {
                         </Select>
                     }
                     {
-                        this.currUser.type !== 2 &&
+                        this.currUser && this.currUser.type !== 2 &&
                         <span>{ADMIN_MEMBER_TYPE[d].name}</span>
                     }
-               </span>,
+                </span>,
         },
         {
             title: '操作',
@@ -214,13 +214,13 @@ class Organize extends Component {
             responsive: ['md'],
             render: (record) =>
                 <span>
-                    { 
-                        this.currUser.type === 2 && 
-                        record.phone !== this.currUser.phone && 
+                    {
+                        this.currUser && this.currUser.type === 2 &&
+                        record.phone !== this.currUser.phone &&
                         <Tag color='red' onClick={() => this.handleDel(record)}>删除</Tag>
                     }
                     {
-                        record.phone === this.currUser.phone && 
+                        this.currUser && (record.phone === this.currUser.phone) &&
                         <Tag color='magenta' onClick={() => this.handleOut(record)}>退出</Tag>
                     }
                 </span>
@@ -235,13 +235,13 @@ class Organize extends Component {
                     组织成员
                     <Badge count={this.memberList.length} className="site-badge-count-4" />
                 </div>
-                {   
-                    this.currUser.type === 2 &&
+                {
+                    this.currUser && this.currUser.type === 2 &&
                     <Button type="primary" style={{ float: 'right', marginTop: -30 }} onClick={this.handleAdd}>
                         添加
                     </Button>
                 }
-                
+
                 <Spin spinning={this.state.loading} size="large" delay={200}>
                     <Table
                         dataSource={this.memberList}
@@ -258,9 +258,9 @@ class Organize extends Component {
                     confirmLoading={this.state.loading}
                     onCancel={this.handleAddCancel}
                 >
-                    {   !this.state.addConfirm &&
+                    {!this.state.addConfirm &&
                         <div>
-                            <Input ref="searchUser" placeholder="请输入用户姓名搜索..." onChange={this.handleChangeText}/>
+                            <Input ref="searchUser" placeholder="请输入用户姓名搜索..." onChange={this.handleChangeText} />
                             <div className="m-listwrapper">
                                 <List
                                     bordered
@@ -269,7 +269,7 @@ class Organize extends Component {
                                         <List.Item className="m-list" onClick={() => this.handleSelectMamber(item)}>
                                             <List.Item.Meta
                                                 title={item.name}
-                                                description={item.type===0 ? item.phone : '已加入管理员'}
+                                                description={item.type === 0 ? item.phone : '已加入管理员'}
                                             />
                                         </List.Item>
                                     )}
@@ -277,7 +277,7 @@ class Organize extends Component {
                             </div>
                         </div>
                     }
-                    { this.state.addConfirm && 
+                    {this.state.addConfirm &&
                         <p>确认将<span className="strong"> {this.state.operateMember.name} </span>设为管理员?</p>
                     }
                 </Modal>

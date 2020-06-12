@@ -90,6 +90,8 @@ var addUser = async (params, cb) => {
         }
     })
 }
+
+
 exports.vertifyUser = vertifyUser;
 exports.verifyPwd = verifyPwd;
 exports.verifyPhone = verifyPhone;

@@ -17,7 +17,8 @@ var argum = {
     "RegionId": "cn-hangzhou",
     "PhoneNumbers": "",
     "SignName": "智能社区健康管理",
-    "TemplateCode": "SMS_190781753",
+    // "TemplateCode": "SMS_190781753",
+    "TemplateCode": "SMS_192820815",
     "TemplateParam": "{\"code\":\"\"}",
 }
 

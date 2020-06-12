@@ -53,13 +53,22 @@ class User {
             return r.data
         }
     }
+    @action
+    async valAuth(params) {
+        const r = await axios.post(urls.API_USER_VALIDATE_AUTH, params)
+        if (r && r.status === 200) {
+            // console.log('this is captcha: ' + r.data.captcha);
+            this.captcha = r.data.captcha
+            return r.data
+        }
+    }
 
     @action
     logout() {
         token.removeUser();
         this.currUser = undefined
-        
-        
+
+
     }
 }
 

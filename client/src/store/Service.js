@@ -67,7 +67,7 @@ class Service {
     }
     @action
     async submitOrder(params) {
-        const r = await axios.post(urls.APT_USER_SUBMIT_ORDER, params);
+        const r = await axios.post(urls.API_USER_SUBMIT_ORDER, params);
         if (r && r.status === 200) {
             return r.data;
         } else {

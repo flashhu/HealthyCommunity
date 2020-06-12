@@ -28,6 +28,7 @@ router.get('/goods', (req, res) => {
     })
 })
 
+router.get('/')
 router.post('/submitOrder', (req, res) => {
     let params  = req.body;
     db.add('orders',params,(err,r)=>{

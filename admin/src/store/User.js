@@ -1,11 +1,14 @@
 import { observable, action, runInAction } from 'mobx'
-import axios from 'axios'
 import { message } from 'antd'
+import axios from 'axios'
+import * as urls from '../constant/urls'
 import { API_MEMBER_DATA, API_UPDATE_MEMBER, API_DELETE_MEMBER } from '../constant/urls'
-
+import token from '../util/token.js'
 class User {
     @observable
-    currUser = {id:1, name:'张三', phone:'13376546789', address:'1幢201室', passwd:'123456', type: 2}
+    currUser = undefined
+    @observable
+    captcha = undefined
     @observable
     memberList = []
     @observable
@@ -28,12 +31,12 @@ class User {
 
     @action
     async updateMember(params) {
-        const r = await axios.post(API_UPDATE_MEMBER, {phone: params.record.phone, type: params.type});
+        const r = await axios.post(API_UPDATE_MEMBER, { phone: params.record.phone, type: params.type });
         if (r && r.status === 200) {
             if (r.data.code) {
-                if (params.new){ //提升权限
+                if (params.new) { //提升权限
                     message.success('提升权限成功！');
-                }else { //修改权限
+                } else { //修改权限
                     message.success('权限更新成功！');
                 }
             }
@@ -47,12 +50,38 @@ class User {
         const r = await axios.get(API_DELETE_MEMBER + params.phone);
         if (r && r.status === 200) {
             if (r.data.code) {
-                let msg = params.isCurr ? '已退出该组织': '移除成员成功！';
+                let msg = params.isCurr ? '已退出该组织' : '移除成员成功！';
                 message.success(msg);
             }
         } else {
             message.error('网络错误', 0.7);
         }
+    }
+
+
+    @action
+    async login(params) {
+        const r = await axios.post(urls.API_USER_LOGIN, params)
+        if (r && r.status === 200) {
+            runInAction(() => {
+                token.saveUser(r.data.data)
+                this.currUser = r.data.data
+                if (this.currUser && !this.currUser.remember) {
+                    token.removeUser();
+                    console.log("not remember");
+                }
+            })
+            return r.data
+        } else {
+            message.error("网络错误", 0.7)
+        }
+    }
+
+
+    @action
+    logout() {
+        token.removeUser();
+        this.currUser = undefined
     }
 }
 

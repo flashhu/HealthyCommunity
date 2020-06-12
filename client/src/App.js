@@ -1,5 +1,5 @@
 import React from 'react'
-import { Switch, Route, HashRouter as Router} from 'react-router-dom'
+import { Switch, Route, HashRouter as Router } from 'react-router-dom'
 import loadable from '@loadable/component'
 import NavWrapper from './component/NavWrapper'
 import FixedBar from './component/FixedBar'
@@ -25,9 +25,10 @@ function App() {
                 <Route path='/conf' render={() => (
                   <ConfWrapper>
                     <Route path='/conf' exact component={loadable(() => import('./app/conf'))} />
+                    <Route path='/conf/order' exact component={loadable(() => import('./app/order'))} />
                   </ConfWrapper>
                 )} />
-                <Route path='/service/cart' exact component={loadable(()=>import('./app/cart'))}/>
+                <Route path='/service/cart' exact component={loadable(() => import('./app/cart'))} />
               </Switch>
             </ContentWrapper>
             <FixedBar />

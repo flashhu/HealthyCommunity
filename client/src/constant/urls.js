@@ -15,4 +15,5 @@ export const API_USER_HABIT_CARD      = API_SERVER + '/health/habitCard';
 export const API_USER_HEALTH_STATUS   = API_SERVER + '/health/healthStatus';
 export const API_USER_GOODS           = API_SERVER + '/service/goods';
 export const API_USER_CART            = API_SERVER + '/service/cart';
-export const APT_USER_SUBMIT_ORDER    = API_SERVER + '/service/submitOrder';
+export const API_USER_SUBMIT_ORDER    = API_SERVER + '/service/submitOrder';
+export const API_USER_VALIDATE_AUTH   = API_SERVER + '/conf/valAuth';

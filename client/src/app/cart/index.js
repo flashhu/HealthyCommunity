@@ -42,7 +42,8 @@ class Cart extends Component {
             {
                 title: '商品图片',
                 dataIndex: 'url',
-                width: '15%',
+                // width: '15%',
+                width:'100px',
                 render: (record) => <img src={record} alt='' />
             },
             {
@@ -87,7 +88,9 @@ class Cart extends Component {
             dataSource: this.shopCartList,
             count: this.count,
             selectedRowKeys: [],
-            visible: false,
+            // visible: false,
+            modal1Visible: false,
+            modal2Visible: false,
             payment: 0,
         };
     }
@@ -142,12 +145,7 @@ class Cart extends Component {
             modal2Visible: false,
         });
     };
-    handleCancel = e => {
-        console.log(e);
-        this.setState({
-            visible: false,
-        });
-    };
+
     selectRow = (record) => {
         const selectedRowKeys = [...this.state.selectedRowKeys];
         if (selectedRowKeys.indexOf(record.key) >= 0) {
