@@ -19,7 +19,7 @@ class Detail extends Component {
 
     componentDidMount() {
         //get id
-        let id = this.props.match.params.id;
+        // let id = this.props.match.params.id;
         this.getArticle();
     }
 

@@ -13,7 +13,7 @@ const tagsData = ['主食', '肉蛋奶', '蔬菜水果'];
 
 @inject('serviceStore', 'userStore', 'healthStore')
 @observer
-class Notice extends Component {
+class Serve extends Component {
     state = {
         count: 0,
         show: true,
@@ -321,7 +321,7 @@ class Notice extends Component {
         const { content, recommend } = this.state;
         // console.log('this is shoplist:', this.shopCartList);
         return (
-            <div className="g-notice">
+            <div className="g-service">
                 <div className="m-title">
                     <h2>菜品采购</h2>
                     <p>品质优选，送货到家</p>
@@ -350,4 +350,4 @@ class Notice extends Component {
     }
 }
 
-export default Notice
+export default Serve

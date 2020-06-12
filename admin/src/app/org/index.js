@@ -95,6 +95,7 @@ class Organize extends Component {
         let params = { phone: this.state.operateMember.phone, isCurr: true }
         this.props.userStore.deleteMember(params);
         //logout
+        this.props.userStore.logout();
     }
 
     handleOutCancel = () => {

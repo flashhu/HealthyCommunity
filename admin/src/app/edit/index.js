@@ -15,6 +15,7 @@ class Edit extends Component {
             <div className="g-health">
                 <div className="m-table interval">
                     <div className="m-line interval">
+                    </div>
                 </div>
             </div>
         )
