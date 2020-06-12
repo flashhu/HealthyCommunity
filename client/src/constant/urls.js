@@ -17,3 +17,7 @@ export const API_USER_GOODS           = API_SERVER + '/service/goods';
 export const API_USER_CART            = API_SERVER + '/service/cart';
 export const API_USER_SUBMIT_ORDER    = API_SERVER + '/service/submitOrder';
 export const API_USER_VALIDATE_AUTH   = API_SERVER + '/conf/valAuth';
+
+//notice
+export const API_NOTICE_DATA = API_SERVER + '/notice/noticeData';
+export const API_NOTICE_SEARCH = API_SERVER + '/notice/search';

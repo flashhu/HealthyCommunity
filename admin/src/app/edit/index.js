@@ -12,13 +12,14 @@ class Edit extends Component {
 
     render() {
         return (
-            <div className="g-notice">
-                <div>admin edit page</div>
-                <div>{this.currUser.name}</div>
-                <div>{this.props.match.params.id}</div>
+            <div className="g-health">
+                <div className="m-table interval">
+                    <div className="m-line interval">
+                </div>
             </div>
         )
     }
 }
+
 
 export default Edit

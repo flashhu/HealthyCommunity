@@ -12,3 +12,8 @@ export const API_UPDATE_MEMBER = API_SERVER + '/user/updateMember';
 export const API_DELETE_MEMBER = API_SERVER + '/user/deleteMember/';
 export const API_USER_LOGIN = API_SERVER + '/user/login';
 export const API_USER_REGISTER = API_SERVER + '/user/register';
+
+//notice
+export const API_NOTICE_DATA = API_SERVER + '/notice/noticeData';
+export const API_NOTICE_SEARCH = API_SERVER + '/notice/search';
+export const API_DELETE_NOTICE = API_SERVER + '/notice/deleteNotice/';
