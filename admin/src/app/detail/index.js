@@ -42,7 +42,7 @@ class Detail extends Component {
                     <Divider orientation="right"><span className="m-time">{time}</span></Divider>
                     <div>
                         <div className="m-aContent">
-                            {content}
+                            <div className="braft-output-content" dangerouslySetInnerHTML={{ __html: content }} />
                         </div>
                     </div>   
                 </div>

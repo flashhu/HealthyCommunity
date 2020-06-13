@@ -177,7 +177,7 @@ router.post('/dataList', (req, res) => {
     } else { //未打卡
         sql = `select name, phone, address, tempStatus, latestCard
                from user, health
-               where id = uid and latestCard!='${req.body.date}'`;
+               where id = uid and (latestCard!='${req.body.date}' or latestCard is null)`;
     }
     db.querySQL(sql, (err, r)=>{
         res.json(r);

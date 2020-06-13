@@ -34,7 +34,10 @@ const columns = [
         dataIndex: 'tempStatus',
         key: 'tempStatus',
         render: d => <span>
-                        <Tag color={ADMIN_HEALTH_TEMP_TYPE[d].color}>{ADMIN_HEALTH_TEMP_TYPE[d].name}</Tag>
+                        { d === null ?
+                            <Tag color="magenta">未记录</Tag>:
+                            <Tag color={ADMIN_HEALTH_TEMP_TYPE[d].color}>{ADMIN_HEALTH_TEMP_TYPE[d].name}</Tag>
+                        }
                     </span>
     },
     {

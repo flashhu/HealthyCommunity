@@ -24,4 +24,10 @@ router.get('/deleteNotice/:id', (req, res) => {
     })
 })
 
+router.post('/addNotice', (req, res) => {
+    db.add('notice', req.body, (err, r)=>{
+        res.json(r);
+    })
+})
+
 module.exports = router;

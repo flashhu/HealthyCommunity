@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
+import { Redirect } from 'react-router-dom'
 import { Input, Button } from 'antd';
 import moment from 'moment';
 import LEdit from 'wangeditor'
-import { computed} from 'mobx'
+import { computed, toJS } from 'mobx'
 import './index.less'
 @inject('userStore','noticeStore')
 @observer
@@ -13,13 +14,20 @@ class Edit extends Component {
         super(props);
         this.state = {
             editorContent:'',
-            inputTitle:''
+            inputTitle:'',
+            noticeListLen: null,
+            isSubmit: false
          };
     }
 
     @computed
     get currUser() {
         return this.props.userStore.currUser;
+    }
+
+    @computed
+    get noticeList() {
+        return toJS(this.props.noticeStore.noticeList);
     }
 
     componentDidMount() {
@@ -53,6 +61,13 @@ class Edit extends Component {
         ]
         editor.customConfig.uploadImgShowBase64 = true
         editor.create()
+
+        this.props.noticeStore.getNoticeData()
+        .then(r => {
+            this.setState({
+                noticeListLen: r.length
+            })
+        })
     };
 
     inputChange = (event) =>{ 
@@ -64,16 +79,26 @@ class Edit extends Component {
     getInput = (value) => {
         //取编辑器的文章html格式
         let date = moment().format('YYYY/MM/DD');
-        let content = this.state.editorContent;     
-        console.log(this.state.inputTitle)   
-        console.log(content)
-        console.log(date)
-        console.log(this.props.userStore.currUser.name)
+        let content = this.state.editorContent;  
+        let params = { id: this.state.noticeListLen + 1, title: this.state.inputTitle, content: content, time: date, writer: this.props.userStore.currUser.name};
+        this.props.noticeStore.addNotice(params)
+        .then(r => {
+            if(r) {
+                this.setState({
+                    isSubmit: true
+                })
+            }
+        })
+        // console.log(this.state.inputTitle)
+        // console.log(content)
+        // console.log(date)
+        // console.log(this.props.userStore.currUser.name)
     }
 
     render() {
         return (
             <div className="g-edit">
+                {this.state.isSubmit && < Redirect to='/notice'/> }
                  <div className="m-show">
                      <div className="m-title bolder">编辑公告</div>
                      <div className="m-input">
