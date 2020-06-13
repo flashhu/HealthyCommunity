@@ -16,6 +16,7 @@ class VerifyPhone extends Component {
             inputValue: '',
             phone: '',
             isable: false,
+            step: 0,
         }
     }
     formRef = React.createRef();
@@ -67,25 +68,30 @@ class VerifyPhone extends Component {
                     //         isable: true,
                     //     })
                     // }
-                    let isMatch = this.captcha === this.refs.captcha.state.value;
-                    // console.log(isMatch);
-                    this.props.userStore.updatePhone({ isMatch: isMatch, oldphone: this.currUser.phone, newphone: this.state.phone }).then(r => {
-                        if (r && r.code === 1) {
-                            message.success('手机号已更改');
-                            this.setState({
-                                loading: false,
-                                time: 59,
-                                phone: '',
-                            })
+                    if (this.state.phone) {
+                        let isMatch = this.captcha === this.refs.captcha.state.value;
+                        // console.log(isMatch);
+                        this.props.userStore.updatePhone({ isMatch: isMatch, oldphone: this.currUser.phone, newphone: this.state.phone }).then(r => {
+                            if (r && r.code === 1 && r.phone && this.state.phone) {
+                                message.success(r.msg);
+                                this.setState({
+                                    loading: false,
+                                    time: 59,
+                                    phone: '',
+                                })
 
-                            this.props.afterVerified();
-                            this.formRef.current.resetFields();
-                            this.setClose();
-                        } else {
-                            message.error(r.msg)
-                        }
-                    })
-
+                                this.props.afterVerified();
+                                this.formRef.current.resetFields();
+                                this.setClose();
+                            } else if (!r.phone) {
+                                message.error('请填写必要内容！');
+                            } else {
+                                message.error(r.msg)
+                            }
+                        })
+                    } else {
+                        message.error('请填写必要内容！');
+                    }
                 }
             } else if (this.props.modifyType === 'passwd') {
                 let isMatch = this.captcha === this.refs.captcha.state.value;
@@ -125,6 +131,9 @@ class VerifyPhone extends Component {
     }
     doValAuth = () => {
         if (this.props.modifyType === 'phone') {
+            this.setState({
+                step: this.state.step + 1,
+            })
             if (!this.props.isVerified) {
                 this.props.userStore.valAuth({ phone: this.currUser.phone })
                     .then(r => {
@@ -160,11 +169,11 @@ class VerifyPhone extends Component {
                         if (r && r.code === 1) {
                             this.setState({ loading: true, time: 59 });
                             console.log('this is valauth captcha:', r.captcha)
-                            if (this.clickCount === 1) {
-                                if (this.state.time !== 0) {
-                                    this.count();
-                                }
+
+                            if (this.state.time !== 0 && this.state.step === 0) {
+                                this.count();
                             }
+
 
                             message.success(r.msg)
                         } else {
@@ -269,7 +278,7 @@ class VerifyPhone extends Component {
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Button loading={this.state.loading} htmlType="button" onClick={this.doValAuth}  disabled={!this.state.phone && this.props.isVerified}>{this.state.loading ? this.state.time + '秒' : '获得验证码'}</Button>
+                                <Button loading={this.state.loading} htmlType="button" onClick={this.doValAuth} disabled={!this.state.phone && this.props.isVerified}>{this.state.loading ? this.state.time + '秒' : '获得验证码'}</Button>
                             </Col>
                         </Row>
                     </Form.Item>

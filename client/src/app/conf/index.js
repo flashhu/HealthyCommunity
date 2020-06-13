@@ -15,7 +15,7 @@ class Conf extends Component {
         isVerified: false,
         clickCount: 0,
         modifyType: null,
-        pwd:'',
+        pwd: '',
     };
 
     @computed
@@ -26,7 +26,7 @@ class Conf extends Component {
     get captcha() {
         return this.props.userStore.captcha;
     }
-    
+
     modifyPhone = () => {
         this.setState({
             visible: true,
@@ -102,6 +102,7 @@ class Conf extends Component {
                     <div>
                         <h3>手机号码</h3>
                         <p>{this.currUser.phone && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
+                        {/* <p>{this.currUser && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p> */}
                     </div>
                     <div className="right z-change" >
                         <div className="change" onClick={this.modifyPhone}>更改</div>
