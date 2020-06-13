@@ -30,7 +30,7 @@ class Notice extends Component{
         if( value === '' ) {
             this.props.noticeStore.getNoticeData();
         }else{
-            console.log(value);
+            // console.log(value);
             let params = { title: value };
             this.props.noticeStore.search(params)
             .then(r => {
@@ -81,7 +81,7 @@ class Notice extends Component{
   ];
     render() {
         return (
-            <div className="g-health">
+            <div className="g-notice">
                 <div className="m-table interval">
                     <div className="m-line interval">
                         <Search 

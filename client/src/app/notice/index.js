@@ -30,17 +30,12 @@ class Notice extends Component{
         if( value === '' ) {
             this.props.noticeStore.getNoticeData();
         }else{
-            console.log(value);
             let params = { title: value };
             this.props.noticeStore.search(params)
             .then(r => {
             });
         }
         this.refs.searchBar.input.state.value = '';
-    }
-
-    getArticle() {
-        this.props.noticeStore.getNoticeData(this.noticeList.id);
     }
 
     columns = [
@@ -59,6 +54,7 @@ class Notice extends Component{
             title: '摘要',
             dataIndex: 'content',
             key: 'content',
+            responsive: ['md'],
             render: item => {
                 return (<div
                     content={item}
@@ -67,19 +63,17 @@ class Notice extends Component{
                 >
                     {item}
                 </div>);
-            }
+            }   
         },
         {
             title: '发布时间',
             dataIndex: 'time',
             key: 'time',
-            responsive: ['md']
+            responsive: ['lg']
         },
   ];
 
     render() {
-        this.getArticle();
-        // let id = this.props.match.params.id;
         return (
             <div className="g-notice">
                 <div className="m-table interval">

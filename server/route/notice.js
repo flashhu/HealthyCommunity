@@ -1,6 +1,5 @@
 const express = require('express');
 var db = require('../module/db');
-// var health = require('../module/notice');
 const router = express.Router();
 
 router.get('/noticeData', (req, res) => {
@@ -19,7 +18,6 @@ router.post('/search', (req, res) => {
 })
 
 router.get('/deleteNotice/:id', (req, res) => {
-    // console.log(typeof(req.params.title));
     let where = { id : parseInt(req.params.id) };
     db.del('notice', where, (err, r) => {
         res.json(r);

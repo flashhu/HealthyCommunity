@@ -19,7 +19,6 @@ class Detail extends Component {
 
     componentDidMount() {
         //get id
-        // let id = this.props.match.params.id;
         this.getArticle();
     }
 
@@ -35,17 +34,20 @@ class Detail extends Component {
                 content = this.noticeList[id-1].content;
                 time = this.noticeList[id-1].time;
         return (
-            <div className="g-health">
-                <div className="m-table interval">
-                    <div className="m-line interval">
+            <div className="g-detail">
+                <div className="m-showArticle">
+                    <div className="bolder">
+                        <h4 className="m-aTitle">{title}</h4>
                     </div>
-                    <h4 className="m-title">{title}</h4>
                     <Divider orientation="right"><span className="m-time">{time}</span></Divider>
-                    <div className="m-content">
-                        {content}
-				    </div>
+                    <div>
+                        <div className="m-aContent">
+                            {content}
+                        </div>
+                    </div>   
                 </div>
             </div>
+
         )
     }
 }

@@ -1,11 +1,13 @@
 import { observable, action, runInAction } from 'mobx'
 import { message } from 'antd'
 import axios from 'axios'
-import { API_NOTICE_DATA, API_NOTICE_SEARCH, API_DELETE_NOTICE} from '../constant/urls'
-
+import { API_NOTICE_DATA, API_NOTICE_SEARCH, API_DELETE_NOTICE } from '../constant/urls'
 class Notice {
     @observable
     noticeList = []
+
+    @observable
+    completionData = []
 
     @action
     async getNoticeData() {
