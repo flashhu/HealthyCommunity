@@ -68,7 +68,6 @@ class User {
                 this.currUser = r.data.data
                 if (this.currUser && !this.currUser.remember) {
                     token.removeUser();
-                    console.log("not remember");
                 }
             })
             return r.data
@@ -82,6 +81,50 @@ class User {
     logout() {
         token.removeUser();
         this.currUser = undefined
+    }
+
+    @action
+    async valPhone(params) {
+        const r = await axios.post(urls.API_USER_VALIDATE_PHONE, params)
+        if (r && r.status === 200) {
+            this.captcha = r.data.captcha
+            return r.data
+        }
+    }
+    @action
+    async valAuth(params) {
+        const r = await axios.post(urls.API_USER_VALIDATE_AUTH, params)
+        if (r && r.status === 200) {
+            this.captcha = r.data.captcha
+            return r.data
+        }
+    }
+    @action
+    async valCaptcha(params) {
+        const r = await axios.post(urls.API_USER_VALIDATE_CAPTCHA, params)
+        if (r && r.status === 200) {
+            return r.data
+        }
+    }
+    @action
+    async updatePhone(params) {
+        const r = await axios.post(urls.API_USER_UPDATE_PHONE, params)
+        if (r && r.status === 200) {
+            runInAction(() => {
+                this.currUser.phone = r.data.phone;
+                token.removeUser();
+            })
+            return r.data;
+        }
+    }
+    @action
+    async updatePwd(params) {
+        const r = await axios.post(urls.API_USER_UPDATE_PWD, params)
+        if (r && r.status === 200) {
+            console.log('this is store:',r.data)
+            token.removeUser();
+            return r.data;
+        }
     }
 }
 

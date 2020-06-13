@@ -34,15 +34,16 @@ var verifyPwd = async (params, cb) => {
         if (err) {
             cb(err, { code: 0, data: null, msg: '数据查询失败！' });
         } else {
-            if (ret.rows.length > 0) {
+            if (ret.rows.length > 0 && (!(ret.rows[0].type === 0 && params.identity === 1))) {
                 user = ret.rows[0]
-                data = { id:user.id, name: user.name, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type }
+                data = { id: user.id, name: user.name, phone: user.phone, address: user.address, passwd: params.passwd, remember: params.remember, type: user.type }
                 cb(err, { code: 1, data: data, msg: '登录成功' })
+            } else if (params.identity === 1) {
+                cb(err, { code: 0, data: null, msg: '登录失败！请检查用户名、密码及权限！' });
             } else {
                 cb(err, { code: 0, data: null, msg: '登录失败！请检查用户名或密码！' });
             }
         }
-
     })
 }
 
@@ -64,11 +65,11 @@ var verifyPhone = async (params, cb) => {
                 captcha = JSON.parse(argum.TemplateParam)
                 captcha.code = Math.random().toFixed(6).slice(-6)
                 argum.TemplateParam = JSON.stringify(captcha);
-                client.request('SendSms', argum, requestOption).then((result) => {
-                    console.log(JSON.stringify(result));
-                }, (ex) => {
-                    console.log(ex);
-                })
+                // client.request('SendSms', argum, requestOption).then((result) => {
+                //     console.log(JSON.stringify(result));
+                // }, (ex) => {
+                //     console.log(ex);
+                // })
                 cb(err, { code: 1, data: params.phone, msg: '已发送', captcha: captcha.code })
 
             }

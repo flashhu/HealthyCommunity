@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Modal, message } from 'antd'
+import { Modal, message, Form, Input } from 'antd'
 import VerifyPhone from '../../component/VerifyPhone'
 import './index.less'
 
@@ -14,7 +14,8 @@ class Conf extends Component {
         visible: false,
         isVerified: false,
         clickCount: 0,
-        modifyType: null
+        modifyType: null,
+        pwd:'',
     };
 
     @computed
@@ -25,7 +26,7 @@ class Conf extends Component {
     get captcha() {
         return this.props.userStore.captcha;
     }
-
+    
     modifyPhone = () => {
         this.setState({
             visible: true,
@@ -86,7 +87,11 @@ class Conf extends Component {
             });
         }, 1000)
     }
-
+    inputChange = (e) => {
+        this.setState({
+            phone: e.target.value,
+        })
+    }
 
     render() {
 
@@ -96,7 +101,7 @@ class Conf extends Component {
                 <div className="m-item m-line">
                     <div>
                         <h3>手机号码</h3>
-                        <p>{this.currUser && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
+                        <p>{this.currUser.phone && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
                     </div>
                     <div className="right z-change" >
                         <div className="change" onClick={this.modifyPhone}>更改</div>
@@ -120,17 +125,59 @@ class Conf extends Component {
                     okText="确认"
                     cancelText="取消"
                 >
-                    {   
-                        (!this.state.isVerified || this.state.modifyType === 'phone' ) && 
-                        <VerifyPhone 
+                    {
+                        (!this.state.isVerified || this.state.modifyType === 'phone') &&
+                        <VerifyPhone
                             clickCount={this.state.clickCount}
                             isVerified={this.state.isVerified}
-                            afterVerified={() => this.setState({isVerified: true})}
+                            modifyType={this.state.modifyType}
+                            afterVerified={() => this.setState({ isVerified: true })}
+                            close={this.handleCancel}
+                            newPwd={this.state.pwd}
                         />
                     }
                     {
                         this.state.modifyType === 'passwd' && this.state.isVerified &&
-                        <p>change passwd</p>
+                        <Form ref={this.formRef}>
+                            <Form.Item
+                                name="passwd"
+                                label="密码 "
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入您的密码',
+                                    },
+                                ]}
+                                onChange={this.inputChange}
+                                hasFeedback
+                            >
+                                <Input.Password />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="confirm"
+                                label="确认密码 "
+                                dependencies={['password']}
+                                hasFeedback
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请确认密码',
+                                    },
+                                    ({ getFieldValue }) => ({
+                                        validator(rule, value) {
+                                            if (!value || getFieldValue('passwd') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject('两次输入不一致');
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <Input.Password />
+                            </Form.Item>
+                        </Form>
+
                     }
                 </Modal>
             </div>

@@ -6,33 +6,6 @@ import moment from 'moment';
 import 'antd/dist/antd.css';
 import './index.less'
 
-
-// const EditableContext = React.createContext();
-
-// const EditableRow = ({ index, ...props }) => {
-//     const [form] = Form.useForm();
-//     return (
-//         <Form form={form} component={false}>
-//             <EditableContext.Provider value={form}>
-//                 <tr {...props} />
-//             </EditableContext.Provider>
-//         </Form>
-//     );
-// };
-
-// const EditableCell = ({
-//     title,
-//     editable,
-//     children,
-//     dataIndex,
-//     record,
-//     handleSave,
-//     ...restProps
-// }) => {
-//     let childNode = children;
-//     return <td {...restProps}>{childNode}</td>;
-// };
-
 @inject('serviceStore', 'userStore')
 @observer
 class Cart extends Component {
@@ -132,7 +105,7 @@ class Cart extends Component {
         this.setState({
             payment: Math.floor(Number.parseFloat(tmp) * 100) / 100,
         }, () => {
-            console.log(this.state.payment);
+            // console.log(this.state.payment);
         })
     };
     hide1Modal = () => {
@@ -162,7 +135,6 @@ class Cart extends Component {
     componentDidMount = () => { }
     handleChange = (key, sale, value) => {
         const dataSource = [...this.state.dataSource];
-        console.log(key, sale, value);
         if (!value || isNaN(value)) {
             dataSource.filter(item => {
                 if (item.key === key) {
@@ -273,7 +245,6 @@ class Cart extends Component {
 
     delSelected = () => {
         var tmp = [];
-        // console.log('this is keys', this.state.selectedRowKeys);
         const dataSource = [...this.state.dataSource];
         const selectedRowKeys = [...this.state.selectedRowKeys];
         for (let i = 0; i < selectedRowKeys.length; i++) {
@@ -288,12 +259,10 @@ class Cart extends Component {
                 tmp.push(item)
             }
         }
-        // console.log('this is tmp', tmp);
         for (let i = 0; i < selectedRowKeys.length; i++) {
             selectedRowKeys.splice(selectedRowKeys.indexOf(i), 1);
             i--;
         }
-        console.log(selectedRowKeys);
         this.setState({
             modal1Visible: false,
 
@@ -305,19 +274,11 @@ class Cart extends Component {
     }
     render() {
         const { dataSource, selectedRowKeys } = this.state;
-        // console.log('this is cart:', this.shopCartList);
-        // console.log('this is render ds', dataSource);
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectedChange,
         }
         const hasSelected = selectedRowKeys.length > 0;
-        // const components = {
-        //     body: {
-        //         // row: EditableRow,
-        //         // cell: EditableCell,
-        //     },
-        // };
         const columns = this.columns.map(col => {
             if (!col.editable) {
                 return col;

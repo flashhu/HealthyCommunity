@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Modal, message } from 'antd'
+import { Modal, message, Form, Input } from 'antd'
 import VerifyPhone from '../../component/VerifyPhone'
 import './index.less'
 
@@ -13,14 +13,10 @@ class Conf extends Component {
         time: 59,
         visible: false,
         isVerified: false,
-        modal1Visible: false,
-        modal2Visible: false,
-        step: 1,
-
+        clickCount: 0,
+        modifyType: null,
+        pwd:'',
     };
-
-    clickCount = 0;
-    formRef = React.createRef();
 
     @computed
     get currUser() {
@@ -30,54 +26,42 @@ class Conf extends Component {
     get captcha() {
         return this.props.userStore.captcha;
     }
-    showModal = () => {
+    
+    modifyPhone = () => {
         this.setState({
             visible: true,
+            modifyType: 'phone'
         });
     }
-    hideModal = () => {
-        this.setState({
-            visible: false,
-        });
-    };
-    show1Modal = () => {
-        this.setState({
-            modal1Visible: true,
-        });
-    };
 
-    hide1Modal = () => {
+    modifyPasswd = () => {
         this.setState({
-            modal1Visible: false,
+            visible: true,
+            modifyType: 'passwd'
         });
-    };
-    hide2Modal = () => {
-        this.setState({
-            modal2Visible: false,
-        });
-    };
-    show2Modal = () => {
-        this.setState({
-            modal2Visible: true,
-        });
-    };
+    }
 
     handleOK = () => {
-        this.clickCount++;
-        console.log('this is parent',this.clickCount)
-
-        if (this.clickCount === 2) {
-            this.setState({
-                modal2Visible: false,
-            })
-            this.clickCount = 0;
-        }
+        let num = this.state.clickCount + 1;
+        this.setState({
+            clickCount: num
+        })
     }
+
+    handleCancel = () => {
+        this.setState({
+            visible: false,
+            clickCount: 0,
+            isVerified: false
+        })
+    }
+
     componentWillUnmount = () => {
         this.setState = (state, callback) => {
             return;
         };
     }
+
     doValAuth = () => {
         this.props.userStore.valAuth({ phone: this.currUser.phone })
             .then(r => {
@@ -103,7 +87,11 @@ class Conf extends Component {
             });
         }, 1000)
     }
-
+    inputChange = (e) => {
+        this.setState({
+            phone: e.target.value,
+        })
+    }
 
     render() {
 
@@ -113,22 +101,10 @@ class Conf extends Component {
                 <div className="m-item m-line">
                     <div>
                         <h3>手机号码</h3>
-                        <p>{this.currUser && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
+                        <p>{this.currUser.phone && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
                     </div>
                     <div className="right z-change" >
-                        <div className="change" onClick={this.show1Modal}>更改</div>
-                        <Modal
-                            title="身份验证"
-                            visible={this.state.modal1Visible}
-                            onOk={this.hide1Modal}
-                            onCancel={this.hide1Modal}
-                            okText="确认"
-                            cancelText="取消"
-                        >
-                            <p>为了你的帐户安全，请验证身份。验证成功后进行下一步操作。</p>
-                            <p>我们将向您的使用手机{this.currUser && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}发送短信</p>
-                            <VerifyPhone clickCount={this.clickCount}/>
-                        </Modal>
+                        <div className="change" onClick={this.modifyPhone}>更改</div>
                     </div>
                 </div>
                 <div className="m-item m-line">
@@ -137,21 +113,73 @@ class Conf extends Component {
                         <p>已设置，可通过帐户密码登录</p>
                     </div>
                     <div className="right z-change">
-                        <div className="change" onClick={this.show2Modal}>更改</div>
-                        <Modal
-                            title="身份验证"
-                            visible={this.state.modal2Visible}
-                            onOk={this.hide2Modal}
-                            onCancel={this.hide2Modal}
-                            okText="确认"
-                            cancelText="取消"
-                        >
-                            <p>为了你的帐户安全，请验证身份。验证成功后进行下一步操作。</p>
-                            <p>我们将向您的使用手机{this.currUser && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}发送短信</p>
-                            <VerifyPhone clickCount={this.clickCount}/>
-                        </Modal>
+                        <div className="change" onClick={this.modifyPasswd}>更改</div>
                     </div>
                 </div>
+
+                <Modal
+                    title="修改信息"
+                    visible={this.state.visible}
+                    onOk={this.handleOK}
+                    onCancel={this.handleCancel}
+                    okText="确认"
+                    cancelText="取消"
+                >
+                    {
+                        (!this.state.isVerified || this.state.modifyType === 'phone') &&
+                        <VerifyPhone
+                            clickCount={this.state.clickCount}
+                            isVerified={this.state.isVerified}
+                            modifyType={this.state.modifyType}
+                            afterVerified={() => this.setState({ isVerified: true })}
+                            close={this.handleCancel}
+                            newPwd={this.state.pwd}
+                        />
+                    }
+                    {
+                        this.state.modifyType === 'passwd' && this.state.isVerified &&
+                        <Form ref={this.formRef}>
+                            <Form.Item
+                                name="passwd"
+                                label="密码 "
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入您的密码',
+                                    },
+                                ]}
+                                onChange={this.inputChange}
+                                hasFeedback
+                            >
+                                <Input.Password />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="confirm"
+                                label="确认密码 "
+                                dependencies={['password']}
+                                hasFeedback
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请确认密码',
+                                    },
+                                    ({ getFieldValue }) => ({
+                                        validator(rule, value) {
+                                            if (!value || getFieldValue('passwd') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject('两次输入不一致');
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <Input.Password />
+                            </Form.Item>
+                        </Form>
+
+                    }
+                </Modal>
             </div>
         )
     }

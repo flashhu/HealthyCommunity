@@ -4,8 +4,6 @@ import { computed } from 'mobx'
 import { Form, Button, Input, Row, Col, message } from 'antd'
 import { isValidPhoneNumber } from 'react-phone-number-input'
 
-let isVal;
-
 @inject('userStore')
 @observer
 class VerifyPhone extends Component {
@@ -15,6 +13,9 @@ class VerifyPhone extends Component {
             visible: false,
             loading: false,
             time: 59,
+            inputValue: '',
+            phone: '',
+            isable: false,
         }
     }
     formRef = React.createRef();
@@ -26,6 +27,7 @@ class VerifyPhone extends Component {
     get captcha() {
         return this.props.userStore.captcha;
     }
+
     componentWillUnmount = () => {
         this.setState = (state, callback) => {
             return;
@@ -34,21 +36,80 @@ class VerifyPhone extends Component {
     componentDidUpdate(prevProps) {
         // console.log(this.props.clickCount, prevProps.clickCount)；
         //一次以上点击确认 且 有点击操作
-        if (this.props.clickCount !== 0 && this.props.clickCount !== prevProps.clickCount){
-            console.log(this.refs.captcha.state.value); //验证码输入框的值
+        if (this.props.clickCount !== 0 && this.props.clickCount !== prevProps.clickCount) {
+            // console.log(this.refs.captcha.state.value); //验证码输入框的值
             // 原先手机号校验
-            if(!this.props.isVerified){
-                //调用后端验证....
+            if (this.props.modifyType === 'phone') {
+                if (!this.props.isVerified) {
+                    //调用后端验证....
+                    let isMatch = this.captcha === this.refs.captcha.state.value;
+                    this.props.userStore.valCaptcha({ isMatch }).then(r => {
+                        if (r && r.code === 1) {
 
-                //验证成功
-                this.props.afterVerified();
-            }else { //新手机号校验
+                            this.setState({
+                                loading: false,
+                                time: 59,
+                                phone: '',
 
+                            })
+                            this.props.afterVerified();
+                            this.formRef.current.resetFields();
+                            // this.refs.captcha.state.value = '';
+                        } else {
+                            message.error(r.msg)
+                        }
+                    })
+                    //验证成功
+
+                } else { //新手机号校验
+                    // if (this.state.phone) {
+                    //     this.setState({
+                    //         isable: true,
+                    //     })
+                    // }
+                    let isMatch = this.captcha === this.refs.captcha.state.value;
+                    // console.log(isMatch);
+                    this.props.userStore.updatePhone({ isMatch: isMatch, oldphone: this.currUser.phone, newphone: this.state.phone }).then(r => {
+                        if (r && r.code === 1) {
+                            message.success('手机号已更改');
+                            this.setState({
+                                loading: false,
+                                time: 59,
+                                phone: '',
+                            })
+
+                            this.props.afterVerified();
+                            this.formRef.current.resetFields();
+                            this.setClose();
+                        } else {
+                            message.error(r.msg)
+                        }
+                    })
+
+                }
+            } else if (this.props.modifyType === 'passwd') {
+                let isMatch = this.captcha === this.refs.captcha.state.value;
+                // console.log('pwd',isMatch);
+                this.props.userStore.valCaptcha({ isMatch }).then(r => {
+                    if (r && r.code === 1) {
+
+                        this.setState({
+                            loading: false,
+                            time: 59,
+                            phone: '',
+
+                        })
+                        this.props.afterVerified();
+
+                    } else {
+                        message.error(r.msg)
+                    }
+                })
             }
 
-            
         }
     }
+
     showModal = () => {
         this.setState({
             visible: true,
@@ -59,20 +120,72 @@ class VerifyPhone extends Component {
             visible: false,
         });
     };
+    setClose = () => {
+        this.props.close()
+    }
     doValAuth = () => {
-        this.props.userStore.valAuth({ phone: this.currUser.phone })
-            .then(r => {
-                if (r && r.code === 1) {
-                    this.setState({ loading: true });
-                    console.log('this is valauth captcha:', r.captcha)
-                    if (this.state.time !== 0) {
-                        this.count();
+        if (this.props.modifyType === 'phone') {
+            if (!this.props.isVerified) {
+                this.props.userStore.valAuth({ phone: this.currUser.phone })
+                    .then(r => {
+                        if (r && r.code === 1) {
+                            this.setState({ loading: true, time: 59 });
+                            console.log('this is valauth captcha:', r.captcha)
+                            if (this.state.time !== 0) {
+                                this.count();
+                            }
+                            message.success(r.msg)
+                        } else {
+                            message.error('发送失败！');
+                        }
+                    })
+            } else {
+                this.props.userStore.valPhone({ phone: this.state.phone }).then(r => {
+                    if (r && r.code === 1) {
+                        this.setState({ loading: true, time: 59, });
+                        console.log('this is 2nd captcha: ' + r.captcha)
+                        // if (this.state.time !== 0) {
+                        //     this.count();
+                        // }
+                        message.success(r.msg)
+                    } else if (r && r.code === 0) {
+                        message.error(r.msg)
                     }
-                    message.success(r.msg)
-                } else {
-                    message.error('发送失败！');
-                }
-            })
+                })
+            }
+        } else if (this.props.modifyType === 'passwd') {
+            if (!this.props.isVerified) {
+                this.props.userStore.valAuth({ phone: this.currUser.phone })
+                    .then(r => {
+                        if (r && r.code === 1) {
+                            this.setState({ loading: true, time: 59 });
+                            console.log('this is valauth captcha:', r.captcha)
+                            if (this.clickCount === 1) {
+                                if (this.state.time !== 0) {
+                                    this.count();
+                                }
+                            }
+
+                            message.success(r.msg)
+                        } else {
+                            message.error('发送失败！');
+                        }
+                    })
+            } else {
+                console.log(this.props.newPwd)
+
+                this.props.userStore.updatePwd({ id: this.currUser.id, pwd: this.props.newPwd })
+                    .then(r => {
+                        if (r && r.code === 1) {
+                            message.success(r.msg)
+                        } else if (r && r.code === 0) {
+                            message.error(r.msg)
+                        }
+                    })
+
+
+            }
+        }
     }
 
 
@@ -86,7 +199,14 @@ class VerifyPhone extends Component {
             });
         }, 1000)
     }
+
+    inputChange = (e) => {
+        this.setState({
+            phone: e.target.value,
+        })
+    }
     render() {
+        // var isVal;
         return (
             <div>
                 {
@@ -111,10 +231,10 @@ class VerifyPhone extends Component {
                                 },
                                 ({ getFieldValue }) => ({
                                     validator(rule, value) {
-                                        isVal = false;
+                                        // isVal = false;
                                         var phone = '+86' + getFieldValue('phone');
                                         if (!value || (isValidPhoneNumber(phone) && getFieldValue('phone').length === 11)) {
-                                            if (value) isVal = true;
+                                            // if (value) isVal = true;
                                             return Promise.resolve();
                                         }
                                         return Promise.reject('手机号非法');
@@ -137,6 +257,7 @@ class VerifyPhone extends Component {
                                 <Form.Item
                                     name="captcha"
                                     noStyle
+
                                     rules={[
                                         {
                                             required: true,
@@ -148,7 +269,7 @@ class VerifyPhone extends Component {
                                 </Form.Item>
                             </Col>
                             <Col span={12}>
-                                <Button loading={this.state.loading} htmlType="button" onClick={this.doValAuth}>{this.state.loading ? this.state.time + '秒' : '获得验证码'}</Button>
+                                <Button loading={this.state.loading} htmlType="button" onClick={this.doValAuth}  disabled={!this.state.phone && this.props.isVerified}>{this.state.loading ? this.state.time + '秒' : '获得验证码'}</Button>
                             </Col>
                         </Row>
                     </Form.Item>

@@ -13,16 +13,16 @@ router.post('/login', (req, res) => {
 
 router.post('/register', (req, res) => {
     let params = req.body;
-    if(params.match){
+    if (params.match) {
         password = genPassword(params.passwd)
-        params = {name: params.name, phone: params.phone, address: params.address, passwd: password, type: params.type}
+        params = { name: params.name, phone: params.phone, address: params.address, passwd: password, type: params.type }
         user.addUser(params, (err, r) => {
             res.status(200).json(r);
         })
-    }else{
-        res.status(200).json({ code: 0, data: null, msg: '验证码错误！'})
+    } else {
+        res.status(200).json({ code: 0, data: null, msg: '验证码错误！' })
     }
-   
+
 })
 
 router.post('/validate', (req, res) => {
@@ -30,22 +30,22 @@ router.post('/validate', (req, res) => {
     user.verifyPhone(params, (err, r) => {
         res.status(200).json(r)
     })
-
 })
 
 //我的
 router.get('/memberData', (req, res) => {
     let sql = 'select * from user where type!= 0';
-    db.select('user', '', '', '', (err, r1)=>{
-        db.querySQL(sql, (err, r2)=>{
-            if(r1.code && r2.code){
-                res.status(200).json({code: 1, data: {userList: r1.rows, memberList: r2.rows}});
-            }else{
-                res.status(200).json({code: 0, msg: '数据获取失败！'});
+    db.select('user', '', '', '', (err, r1) => {
+        db.querySQL(sql, (err, r2) => {
+            if (r1.code && r2.code) {
+                res.status(200).json({ code: 1, data: { userList: r1.rows, memberList: r2.rows } });
+            } else {
+                res.status(200).json({ code: 0, msg: '数据获取失败！' });
             }
         })
     })
 })
+
 
 router.post('/updateMember', (req, res) => {
     let params = req.body;

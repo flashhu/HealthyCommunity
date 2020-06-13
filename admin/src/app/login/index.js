@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Redirect } from 'react-router-dom'
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
-import { Form, Input, Checkbox, Button, message } from 'antd'
+import { Form, Input, Checkbox, Button, message, Tag } from 'antd'
 import { PhoneOutlined, LockOutlined } from '@ant-design/icons'
 import 'antd/dist/antd.css'
 import logo from '../../asset/image/favicon.png'
@@ -24,7 +24,7 @@ class Login extends Component {
                     if (r && r.code === 1) {
                         message.success(r.msg)
                     } else if (r && r.code === 0) {
-                        message.error(r.data)
+                        message.error(r.msg)
                     }
                 })
         }
@@ -38,7 +38,7 @@ class Login extends Component {
     }
     doLogin = () => {
         this.formRef.current.validateFields().then(values => {
-            this.props.userStore.login(values)
+            this.props.userStore.login({ phone: values.phone, passwd: values.passwd, remember: values.remember, identity: 1 })
                 .then(r => {
                     if (r && r.code === 1) {
                         message.success(r.msg)
@@ -48,9 +48,9 @@ class Login extends Component {
                 })
         });
     }
-    onFinish = values => {
-        console.log('Received values of form: ', values);
-    };
+    // onFinish = values => {
+    //     console.log('Received values of form: ', values);
+    // };
     onChange = e => {
         this.setState({
             value: e.target.value,
@@ -120,8 +120,12 @@ class Login extends Component {
                                 <Button type="primary" htmlType="submit" className="login-form-button" onClick={this.doLogin} block>
                                     登录
                                 </Button>
+                                
+
                             </Form.Item>
+                            
                         </Form>
+                        <Tag color="blue" className='identity'>管理端</Tag>
                     </div>
                 </div>
             </div>

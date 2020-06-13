@@ -27,7 +27,7 @@ class Login extends Component {
                     if (r && r.code === 1) {
                         message.success(r.msg)
                     } else if (r && r.code === 0) {
-                        message.error(r.data)
+                        message.error(r.msg)
                     }
                 })
         }
@@ -41,7 +41,7 @@ class Login extends Component {
     }
     doLogin = () => {
         this.formRef.current.validateFields().then(values => {
-            this.props.userStore.login(values)
+            this.props.userStore.login({ phone: values.phone, passwd: values.passwd, remember: values.remember, identity: 0 })
                 .then(r => {
                     if (r && r.code === 1) {
                         message.success(r.msg)
@@ -51,9 +51,9 @@ class Login extends Component {
                 })
         });
     }
-    onFinish = values => {
-        console.log('Received values of form: ', values);
-    };
+    // onFinish = values => {
+    //     console.log('Received values of form: ', values);
+    // };
     onChange = e => {
         this.setState({
             value: e.target.value,

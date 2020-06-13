@@ -71,7 +71,7 @@ const formItemLayout = {
             span: 8,
         },
         md: {
-            span: 6,
+            span: 7,
         },
     },
     wrapperCol: {
@@ -82,7 +82,7 @@ const formItemLayout = {
             span: 16,
         },
         md: {
-            span: 12,
+            span: 10,
             offset: 0,
         },
     },
@@ -99,8 +99,8 @@ const tailFormItemLayout = {
             offset: 8,
         },
         md: {
-            span: 12,
-            offset: 6,
+            span: 10,
+            offset: 7,
         },
     },
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react'
 import { computed } from 'mobx'
 import { Table, Badge } from 'antd';
-import { } from '@ant-design/icons';
+import moment from 'moment';
 import 'antd/dist/antd.css'
 import './index.less'
 
@@ -47,12 +47,6 @@ class Order extends Component {
                 key: 'status',
                 width: '15%',
                 responsive: ['md'],
-                render: () => (
-                    <span>
-                        <Badge status="success" />
-                      已完成
-                    </span>
-                )
             }
         ]
     }
@@ -63,13 +57,14 @@ class Order extends Component {
     }
 
     render() {
+        var now = moment().format('YYYY-MM-DD HH:mm:ss');
         const outData = [
             {
                 key: 0,
                 firstpic: 'https://healthycommunity.oss-cn-hangzhou.aliyuncs.com/img/main/bean_bun.jpg',
                 payment: 6,
                 detail: '豆沙包x1 南瓜粥x1',
-                time: '2020-06-10 19:44:18',
+                time: now,
                 desc: [
                     {
                         key: 0,
@@ -87,8 +82,13 @@ class Order extends Component {
                         sale: 1,
                         total: 1,
                     }
-                ]
-
+                ],
+                status: (
+                    <span>
+                        <Badge status='error' />
+                        未完成
+                    </span>
+                ),
             }
             ,
             {
@@ -123,8 +123,13 @@ class Order extends Component {
                         total: 1.5,
                     }
 
-                ]
-
+                ],
+                status: (
+                    <span>
+                        <Badge status='success' />
+                        已完成
+                    </span>
+                ),
             }
             ,
             {
@@ -158,7 +163,13 @@ class Order extends Component {
                         sale: 2,
                         total: 2,
                     }
-                ]
+                ],
+                status: (
+                    <span>
+                        <Badge status='success' />
+                        已完成
+                    </span>
+                ),
             }
         ];
 
