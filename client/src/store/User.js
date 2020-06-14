@@ -72,11 +72,12 @@ class User {
     async updatePwd(params) {
         const r = await axios.post(urls.API_USER_UPDATE_PWD, params)
         if (r && r.status === 200) {
-            console.log('this is store:',r.data)
+            // console.log('this is store:',r.data)
             token.removeUser();
             return r.data;
         }
     }
+
     @action
     logout() {
         token.removeUser();

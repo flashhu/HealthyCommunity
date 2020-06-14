@@ -63,11 +63,6 @@ class VerifyPhone extends Component {
                     //验证成功
 
                 } else { //新手机号校验
-                    // if (this.state.phone) {
-                    //     this.setState({
-                    //         isable: true,
-                    //     })
-                    // }
                     if (this.state.phone) {
                         let isMatch = this.captcha === this.refs.captcha.state.value;
                         // console.log(isMatch);
@@ -143,7 +138,10 @@ class VerifyPhone extends Component {
                             if (this.state.time !== 0) {
                                 this.count();
                             }
-                            message.success(r.msg)
+                            // if (this.state.step === 1) {
+                            //     message.success(r.msg)
+                            // }
+
                         } else {
                             message.error('发送失败！');
                         }
@@ -156,7 +154,7 @@ class VerifyPhone extends Component {
                         // if (this.state.time !== 0) {
                         //     this.count();
                         // }
-                        message.success(r.msg)
+                        // message.success(r.msg)
                     } else if (r && r.code === 0) {
                         message.error(r.msg)
                     }
@@ -173,26 +171,10 @@ class VerifyPhone extends Component {
                             if (this.state.time !== 0 && this.state.step === 0) {
                                 this.count();
                             }
-
-
-                            message.success(r.msg)
                         } else {
                             message.error('发送失败！');
                         }
                     })
-            } else {
-                console.log(this.props.newPwd)
-
-                this.props.userStore.updatePwd({ id: this.currUser.id, pwd: this.props.newPwd })
-                    .then(r => {
-                        if (r && r.code === 1) {
-                            message.success(r.msg)
-                        } else if (r && r.code === 0) {
-                            message.error(r.msg)
-                        }
-                    })
-
-
             }
         }
     }
@@ -240,10 +222,8 @@ class VerifyPhone extends Component {
                                 },
                                 ({ getFieldValue }) => ({
                                     validator(rule, value) {
-                                        // isVal = false;
                                         var phone = '+86' + getFieldValue('phone');
                                         if (!value || (isValidPhoneNumber(phone) && getFieldValue('phone').length === 11)) {
-                                            // if (value) isVal = true;
                                             return Promise.resolve();
                                         }
                                         return Promise.reject('手机号非法');

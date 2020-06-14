@@ -39,7 +39,7 @@ router.post('/updatePhone', (req, res) => {
 router.post('/updatePwd', (req, res) => {
     let params = req.body;
     let pwd = genPassword(params.pwd);
-    let sql = `update user set passwd=${pwd} where id=${params.id}`;
+    let sql = `update user set passwd="${pwd}" where id=${params.id}`;
     db.querySQL(sql, (err, r) => {
         res.status(200).json({ code: 1, msg: '已更新' });
     })
@@ -49,11 +49,11 @@ var sendMsg = (params) => {
     captcha = JSON.parse(argum.TemplateParam)
     captcha.code = Math.random().toFixed(6).slice(-6)
     argum.TemplateParam = JSON.stringify(captcha);
-    client.request('SendSms', argum, requestOption).then((result) => {
-        console.log(JSON.stringify(result));
-    }, (ex) => {
-        console.log(ex);
-    })
+    // client.request('SendSms', argum, requestOption).then((result) => {
+    //     console.log(JSON.stringify(result));
+    // }, (ex) => {
+    //     console.log(ex);
+    // })
     return captcha.code;
 }
 module.exports = router

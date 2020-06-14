@@ -15,7 +15,8 @@ class Conf extends Component {
         isVerified: false,
         clickCount: 0,
         modifyType: null,
-        pwd:'',
+        pwd: '',
+        step: 0,
     };
 
     @computed
@@ -26,7 +27,7 @@ class Conf extends Component {
     get captcha() {
         return this.props.userStore.captcha;
     }
-    
+
     modifyPhone = () => {
         this.setState({
             visible: true,
@@ -46,6 +47,16 @@ class Conf extends Component {
         this.setState({
             clickCount: num
         })
+        if (this.state.modifyType === 'passwd' && this.state.isVerified) {
+            this.props.userStore.updatePwd({ id: this.currUser.id, pwd: this.state.pwd })
+                .then(r => {
+                    if (r && r.code === 1) {
+                        message.success(r.msg)
+                    } else if (r && r.code === 0) {
+                        message.error(r.msg)
+                    }
+                }).then(this.handleCancel)
+        }
     }
 
     handleCancel = () => {
@@ -89,7 +100,7 @@ class Conf extends Component {
     }
     inputChange = (e) => {
         this.setState({
-            phone: e.target.value,
+            pwd: e.target.value,
         })
     }
 
@@ -101,7 +112,8 @@ class Conf extends Component {
                 <div className="m-item m-line">
                     <div>
                         <h3>手机号码</h3>
-                        <p>{this.currUser.phone && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
+                        <p>{this.currUser && this.currUser.phone && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p>
+                        {/* <p>{this.currUser && (this.currUser.phone.substr(0, 3) + '****' + this.currUser.phone.substr(7, 4))}</p> */}
                     </div>
                     <div className="right z-change" >
                         <div className="change" onClick={this.modifyPhone}>更改</div>
