@@ -49,11 +49,11 @@ var sendMsg = (params) => {
     captcha = JSON.parse(argum.TemplateParam)
     captcha.code = Math.random().toFixed(6).slice(-6)
     argum.TemplateParam = JSON.stringify(captcha);
-    // client.request('SendSms', argum, requestOption).then((result) => {
-    //     console.log(JSON.stringify(result));
-    // }, (ex) => {
-    //     console.log(ex);
-    // })
+    client.request('SendSms', argum, requestOption).then((result) => {
+        console.log(JSON.stringify(result));
+    }, (ex) => {
+        console.log(ex);
+    })
     return captcha.code;
 }
 module.exports = router
