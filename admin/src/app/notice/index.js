@@ -40,7 +40,6 @@ class Notice extends Component{
     }
 
     handleDelete =(value)=>{
-        console.log(value, this.noticeList);
         this.props.noticeStore.delNotice(value);
     }
 

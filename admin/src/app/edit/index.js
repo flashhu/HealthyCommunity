@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { Redirect } from 'react-router-dom'
-import { Input, Button } from 'antd';
+import { Input, Button, message } from 'antd';
 import moment from 'moment';
 import LEdit from 'wangeditor'
 import { computed, toJS } from 'mobx'
@@ -36,7 +36,6 @@ class Edit extends Component {
         const editor = new LEdit(elemMenu, elemBody)
         // 使用 onchange 函数监听内容的变化，并实时更新到 state 中
         editor.customConfig.onchange = html => {
-            // console.log(editor.txt.html())
             this.setState({
                 editorContent: editor.txt.html()
             })
@@ -55,9 +54,8 @@ class Edit extends Component {
             'list',  // 列表
             'justify',  // 对齐方式
             'quote',  // 引用
-            'image',  // 插入图片
+            // 'image',  // 插入图片
             'table',  // 表格
-            'code',  // 插入代码
         ]
         editor.customConfig.uploadImgShowBase64 = true
         editor.create()
@@ -80,15 +78,19 @@ class Edit extends Component {
         //取编辑器的文章html格式
         let date = moment().format('YYYY/MM/DD');
         let content = this.state.editorContent;  
-        let params = { id: this.state.noticeListLen + 1, title: this.state.inputTitle, content: content, time: date, writer: this.props.userStore.currUser.name};
-        this.props.noticeStore.addNotice(params)
-        .then(r => {
-            if(r) {
-                this.setState({
-                    isSubmit: true
+        if (this.state.inputTitle === '') {
+            message.error('请输入标题！');
+        }else {
+            let params = { id: this.state.noticeListLen + 1, title: this.state.inputTitle, content: content, time: date, writer: this.props.userStore.currUser.name };
+            this.props.noticeStore.addNotice(params)
+                .then(r => {
+                    if (r) {
+                        this.setState({
+                            isSubmit: true
+                        })
+                    }
                 })
-            }
-        })
+        }
         // console.log(this.state.inputTitle)
         // console.log(content)
         // console.log(date)

@@ -10,8 +10,8 @@ export const ADMIN_MENU_LIST = [
 ]
 
 export const USER_CONF_MENU_LIST = [
+    { name: '账户管理', path: '/conf' },
     { name: '我的订单', path: '/conf/order' },
-    { name: '账户管理', path: '/conf' }
 ]
 
 // 健康状态对应的提示

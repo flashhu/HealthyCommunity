@@ -1,7 +1,7 @@
 import { observable, action, runInAction } from 'mobx'
 import { message } from 'antd'
 import axios from 'axios'
-import { API_NOTICE_DATA, API_NOTICE_SEARCH, API_DELETE_NOTICE, API_ADD_NOTICE } from '../constant/urls'
+import { API_NOTICE_DATA, API_NOTICE_SEARCH, API_DELETE_NOTICE, API_ADD_NOTICE, API_NOTICE_DETAIL } from '../constant/urls'
 class Notice {
     @observable
     noticeList = []
@@ -61,6 +61,18 @@ class Notice {
                 message.success(r.data.msg);
                 this.getNoticeData();
                 return true;
+            }
+        } else {
+            message.error('网络错误', 0.7);
+        }
+    }
+
+    @action
+    async getNotice(id) {
+        const r = await axios.get(API_NOTICE_DETAIL + id);
+        if (r && r.status === 200) {
+            if (r.data.code) {
+                return r.data.rows[0];
             }
         } else {
             message.error('网络错误', 0.7);

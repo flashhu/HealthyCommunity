@@ -1,48 +1,37 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-import { computed , toJS} from 'mobx'
 import { Divider } from 'antd'
 import './index.less'
 
 @inject('noticeStore')
 @observer
 class Detail extends Component {
-
     state = {
-        noticeDetail : this.noticeList,
+        noticeDetail: '',
     };
 
-    @computed
-    get noticeList() {
-        return toJS(this.props.noticeStore.noticeList);
-    }
-
     componentDidMount() {
-        //get id
-        this.getArticle();
-    }
-
-    getArticle() {
-        this.props.noticeStore.getNoticeData(this.noticeList.id);
+        let id = this.props.match.params.id;
+        this.props.noticeStore.getNotice(id)
+        .then(r => {
+            this.setState({
+                noticeDetail: r
+            })
+        })
     }
     
     render() {
-        let id = this.props.match.params.id;
-        this.getArticle();
-            var title,content,time;
-                title = this.noticeList[id-1].title;
-                content = this.noticeList[id-1].content;
-                time = this.noticeList[id-1].time;
+        const { noticeDetail } = this.state;
         return (
             <div className="g-detail">
                 <div className="m-showArticle">
                     <div className="bolder">
-                        <h4 className="m-aTitle">{title}</h4>
+                        <h4 className="m-aTitle">{noticeDetail ? noticeDetail.title : ''}</h4>
                     </div>
-                    <Divider orientation="right"><span className="m-time">{time}</span></Divider>
+                    <Divider orientation="right"><span className="m-time">{noticeDetail ? noticeDetail.time: ''}</span></Divider>
                     <div>
                         <div className="m-aContent">
-                            <div className="braft-output-content" dangerouslySetInnerHTML={{ __html: content }} />
+                            <div className="braft-output-content" dangerouslySetInnerHTML={{ __html: noticeDetail ? noticeDetail.content: '' }} />
                         </div>
                     </div>   
                 </div>

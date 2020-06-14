@@ -23,3 +23,4 @@ export const API_NOTICE_DATA = API_SERVER + '/notice/noticeData';
 export const API_NOTICE_SEARCH = API_SERVER + '/notice/search';
 export const API_DELETE_NOTICE = API_SERVER + '/notice/deleteNotice/';
 export const API_ADD_NOTICE = API_SERVER + '/notice/addNotice';
+export const API_NOTICE_DETAIL = API_SERVER + '/notice/detail/';

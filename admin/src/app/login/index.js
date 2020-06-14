@@ -18,7 +18,7 @@ class Login extends Component {
         }
 
         let user = token.getUser()
-        if (user) {
+        if (user && user.type > 0) {
             this.props.userStore.login(user)
                 .then(r => {
                     if (r && r.code === 1) {
@@ -64,6 +64,7 @@ class Login extends Component {
             <div className='g-login'>
                 {this.currUser && <Redirect to='/' />}
                 <div className='m-login'>
+                    <Tag color="blue" className='identity' style={{float: 'right', marginRight: -1}}>管理端</Tag>
                     <div className='m-logo'>
                         <img src={logo} alt='' />
                     </div>
@@ -125,7 +126,6 @@ class Login extends Component {
                             </Form.Item>
                             
                         </Form>
-                        <Tag color="blue" className='identity'>管理端</Tag>
                     </div>
                 </div>
             </div>

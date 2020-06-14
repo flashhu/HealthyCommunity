@@ -107,7 +107,7 @@ class CardDialog extends Component {
                                 rules={[{ required: true,  message: '请输入体温！' }]}
                                 noStyle
                             >
-                                <InputNumber min={35} max={45} step={0.1} />
+                                <InputNumber min={35.8} max={43} step={0.1} />
                             </Form.Item>
                             <span className="ant-form-text">°C</span>
                         </Form.Item>

@@ -39,6 +39,11 @@ class User {
                 } else { //修改权限
                     message.success('权限更新成功！');
                 }
+                if(params.record.phone === this.currUser.phone) {
+                    runInAction(() => {
+                        this.currUser.type = params.type;
+                    })
+                }
             }
         } else {
             message.error('网络错误', 0.7);
