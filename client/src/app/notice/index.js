@@ -61,7 +61,7 @@ class Notice extends Component{
                     style={{maxWidth: '300px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',
                         wordWrap: 'break-word', wordBreak: 'break-all'}}
                 >
-                    {item}
+                    <div dangerouslySetInnerHTML={{ __html: item.substr(0, 20) + '...' }} />
                 </div>);
             }   
         },

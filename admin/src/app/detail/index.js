@@ -31,7 +31,7 @@ class Detail extends Component {
                     <Divider orientation="right"><span className="m-time">{noticeDetail ? noticeDetail.time: ''}</span></Divider>
                     <div>
                         <div className="m-aContent">
-                            <div className="braft-output-content" dangerouslySetInnerHTML={{ __html: noticeDetail ? noticeDetail.content: '' }} />
+                            <div dangerouslySetInnerHTML={{ __html: noticeDetail ? noticeDetail.content: '' }} />
                         </div>
                     </div>   
                 </div>
